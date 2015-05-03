@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
+using Sequencer.Configuration;
+using WordSequence;
 
-namespace WordSequence
+namespace Sequencer.Forms
 {
     public partial class WordSequenceForm : Form
     {

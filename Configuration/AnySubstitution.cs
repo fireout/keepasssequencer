@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace WordSequence.Configuration
+﻿namespace Sequencer.Configuration
 {
     public class AnySubstitution :BaseSubstitution
     {

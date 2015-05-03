@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace WordSequence.Configuration
+namespace Sequencer.Configuration
 {
     [XmlRoot(ElementName = "Words")]
     public class CharacterList : CustomSerializationBaseList<char>

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordSequence", "WordSequence.csproj", "{A459BE9A-CFAB-411D-84B8-79A8910B82E5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sequencer", "Sequencer.csproj", "{A459BE9A-CFAB-411D-84B8-79A8910B82E5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SequencerTester", "..\SequencerTester\SequencerTester.csproj", "{6FC98E7F-D960-4525-A16E-4AC69AA492F9}"
 EndProject

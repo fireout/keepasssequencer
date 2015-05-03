@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
-namespace WordSequence.Configuration
+namespace Sequencer.Configuration
 {
     public abstract class OverridingCustomSerializationBaseList<T> : CustomSerializationBaseList<T>
     {
@@ -11,9 +8,9 @@ namespace WordSequence.Configuration
         public bool Override { get; set; }
     }
 
-    public class OverridingList<T> : List<T>
-    {
-        [XmlAttribute("override")]
-        public bool Override { get; set; }
-    }
+    //public class OverridingList<T> : List<T>
+    //{
+    //    [XmlAttribute("override")]
+    //    public bool Override { get; set; }
+    //}
 }

@@ -1,4 +1,4 @@
-﻿namespace WordSequence.Forms
+﻿namespace Sequencer.Forms
 {
     partial class SubstitutionForm
     {
@@ -55,7 +55,7 @@
             this.txtReplace.Location = new System.Drawing.Point(76, 33);
             this.txtReplace.Name = "txtReplace";
             this.txtReplace.Size = new System.Drawing.Size(196, 20);
-            this.txtReplace.TabIndex = 1;
+            this.txtReplace.TabIndex = 0;
             // 
             // label2
             // 
@@ -135,7 +135,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(284, 112);
+            this.ClientSize = new System.Drawing.Size(284, 111);
             this.Controls.Add(this.btnOk);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.ddoMethod);
@@ -154,7 +154,7 @@
             this.Name = "SubstitutionForm";
             this.ShowIcon = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.Text = "Substitution";
+            this.Text = "3";
             this.ResumeLayout(false);
             this.PerformLayout();
 

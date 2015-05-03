@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
-using System.Xml.Serialization;
 
-namespace WordSequence.Configuration
+namespace Sequencer.Configuration
 {
     public class SubstitutionList : OverridingCustomSerializationBaseList<BaseSubstitution>
     {

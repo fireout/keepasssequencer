@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using WordSequence.Configuration;
+using Sequencer.Configuration;
 
-namespace WordSequence.Forms
+namespace Sequencer.Forms
 {
     public partial class SubstitutionForm : Form
     {

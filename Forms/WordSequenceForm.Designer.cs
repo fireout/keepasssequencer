@@ -1,4 +1,4 @@
-﻿namespace WordSequence
+﻿namespace Sequencer.Forms
 {
     partial class WordSequenceForm
     {

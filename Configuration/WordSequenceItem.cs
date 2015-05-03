@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using System.Xml.Serialization;
 
-namespace WordSequence.Configuration
+namespace Sequencer.Configuration
 {
     public class WordSequenceItem : SequenceItem
     {

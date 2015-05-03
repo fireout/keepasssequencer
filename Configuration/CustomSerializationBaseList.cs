@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace WordSequence.Configuration
+namespace Sequencer.Configuration
 {
     public abstract class CustomSerializationBaseList<T> : IList<T>, IXmlSerializable
     {
@@ -30,6 +29,11 @@ namespace WordSequence.Configuration
         {
             BackingList.Add(item);
         }
+        public void AddRange(IEnumerable<T> values)
+        {
+            BackingList.AddRange(values);
+        }
+
 
         public void Clear()
         {

@@ -5,11 +5,16 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Serialization;
-using WordSequence.Configuration;
+using KeePassLib;
+using KeePassLib.Cryptography;
+using KeePassLib.Cryptography.PasswordGenerator;
+using KeePassLib.Security;
+using Sequencer.Configuration;
+using Sequencer.Forms;
 
 namespace WordSequence
 {
-    public class Sequencer
+    public class Sequencer : CustomPwGenerator
     {
         private string GetConfigurationPath()
         {
@@ -35,7 +40,7 @@ namespace WordSequence
         public void Save(PasswordSequenceConfiguration configuration)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(PasswordSequenceConfiguration), "http://quasivirtuel.com/PasswordSequenceConfiguration.xsd");
-            FileStream configStream = File.Open(GetConfigurationPath() + "2", FileMode.Create);
+            FileStream configStream = File.Open(GetConfigurationPath(), FileMode.Create);
             try
             {
                 serializer.Serialize(configStream, configuration);
@@ -185,6 +190,44 @@ namespace WordSequence
                     substitutedWord += word[i];
             }
             return substitutedWord;
+        }
+
+        private PasswordSequenceConfiguration _configuration;
+        protected PasswordSequenceConfiguration Configuration { get { return _configuration ?? (_configuration = Load()); } }
+
+        public override ProtectedString Generate(PwProfile prf, CryptoRandomStream crsRandomSource)
+        {
+            return new ProtectedString(true, GenerateSequence(Load(), new Random((int)(crsRandomSource.GetRandomUInt64() % int.MaxValue))));
+        }
+
+        public override string GetOptions(string strCurrentOptions)
+        {
+            MainForm form = new MainForm();
+            form.Configuration = Configuration;
+            form.ShowDialog();
+            _configuration = null;
+            return base.GetOptions(strCurrentOptions);
+        }
+
+
+        public override bool SupportsOptions
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        private static readonly PwUuid UUID = new PwUuid(new byte[] {
+			0x53, 0x81, 0x36, 0x0E, 0xA7, 0xFC, 0x48, 0x36,
+			0x9E, 0x9F, 0xA4, 0x4F, 0x1A, 0xF0, 0x58, 0x37 });
+        public override PwUuid Uuid
+        {
+            get { return UUID; }
+        }
+        public override string Name
+        {
+            get { return "Sequencer"; }
         }
     }
 }

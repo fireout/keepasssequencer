@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -8,9 +8,9 @@
     <ProjectGuid>{A459BE9A-CFAB-411D-84B8-79A8910B82E5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WordSequence</RootNamespace>
-    <AssemblyName>WordSequence</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <RootNamespace>Sequencer</RootNamespace>
+    <AssemblyName>Sequencer</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -31,6 +31,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,24 +43,30 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="KeePass, Version=2.1.6.16253, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL">
-      <ExecutableExtension>.exe</ExecutableExtension>
+    <Reference Include="KeePass, Version=2.29.0.17893, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\KeePass.exe</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -81,6 +88,11 @@
     <Compile Include="Configuration\WholeSubstitution.cs" />
     <Compile Include="Configuration\WordList.cs" />
     <Compile Include="Configuration\WordSequenceItem.cs" />
+    <Compile Include="Forms\OrientedTextLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\Direction.cs" />
+    <Compile Include="Forms\Orientation.cs" />
     <Compile Include="Forms\SubstitutionForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -90,26 +102,11 @@
     <Compile Include="Forms\SubstitutionListControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\SubstitutionListControl.Designer.cs">
-      <DependentUpon>SubstitutionListControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="GeneratorPlugin.cs" />
     <Compile Include="Forms\ListItem.cs" />
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ItemGenerator\CharacterGenerator.cs" />
-    <Compile Include="ItemGenerator\IItemGenerator.cs" />
-    <Compile Include="ItemGenerator\WordGenerator.cs" />
-    <Compile Include="ItemVisitor\AnySubstitutionVisitor.cs" />
-    <Compile Include="ItemVisitor\CapitalizeVisitor.cs" />
-    <Compile Include="ItemVisitor\IItemVisitor.cs" />
-    <Compile Include="ItemVisitor\ISubstitutionVisitor.cs" />
-    <Compile Include="ItemVisitor\SubstitutionsVisitor.cs" />
-    <Compile Include="ItemVisitor\WholeSubstitutionVisitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Forms\WordSequenceForm.cs">
       <SubType>Form</SubType>
@@ -123,7 +120,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Sequencer.cs" />
-    <Compile Include="WordSequenceGenerator.cs" />
     <Compile Include="Configuration\WordSequenceOption.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -139,9 +135,6 @@
     <EmbeddedResource Include="Forms\SubstitutionForm.resx">
       <DependentUpon>SubstitutionForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\SubstitutionListControl.resx">
-      <DependentUpon>SubstitutionListControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\WordSequenceForm.resx">
       <DependentUpon>WordSequenceForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -154,6 +147,12 @@
     <Content Include="lib\KeePass.exe" />
     <None Include="Resources\icon-add.png" />
     <None Include="Resources\delete_24.png" />
+    <None Include="Resources\probability.ico" />
+    <None Include="Resources\edit.png" />
+    <None Include="Resources\pencil_32.png" />
+    <None Include="Resources\gear_32.png" />
+    <None Include="Resources\up_32.png" />
+    <None Include="Resources\down_32.png" />
     <Content Include="SamplePasswordSequenceConfiguration.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -175,7 +174,6 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
