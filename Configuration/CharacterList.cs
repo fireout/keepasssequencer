@@ -9,6 +9,11 @@ namespace Sequencer.Configuration
     [XmlRoot(ElementName = "Words")]
     public class CharacterList : CustomSerializationBaseList<char>
     {
+        public CharacterList()
+        {
+            BackingList = new List<char>();
+        }
+
         public override void ReadXml(XmlReader reader)
         {
             string content = reader.ReadElementContentAsString();

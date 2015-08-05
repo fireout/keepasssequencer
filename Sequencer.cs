@@ -16,39 +16,99 @@ namespace WordSequence
 {
     public class Sequencer : CustomPwGenerator
     {
-        private string GetConfigurationPath()
+        /* if returnEmptyConfig is true, or a user config file is found, returns
+         * the path to the user config file.
+         *
+         * if returnEmptyConfig is false, or the user config file path is not
+         * specified, and the user config file is not found, returns the path to
+         * the global config.
+         *
+         * Note reading the global config at startup (for a missing user config
+         * file) and then writing the user config after changing settings, allows
+         * a default configuration to be specified in the global config.
+         */
+        private string GetConfigurationPath(bool returnEmptyConfig)
         {
-            string config = System.Configuration.ConfigurationManager.AppSettings["configPath"];
+            string config = System.Configuration.ConfigurationManager.AppSettings["userConfigPath"];
 
-            return System.IO.Path.GetFullPath(config);
+            if (null != config)
+            {
+                config = Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                        config);
+            }
+
+            if (null == config || !(returnEmptyConfig || File.Exists(config)))
+            {
+                config = System.Configuration.ConfigurationManager.AppSettings["configPath"];
+            }
+
+            if (null != config && (returnEmptyConfig || File.Exists(config)))
+            {
+                return System.IO.Path.GetFullPath(config);
+            }
+            else
+            {
+                return null; /* TODO: better to throw exception? */
+            }
         }
 
         public PasswordSequenceConfiguration Load()
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(PasswordSequenceConfiguration), "http://quasivirtuel.com/PasswordSequenceConfiguration.xsd");
-            FileStream configStream = File.OpenRead(GetConfigurationPath());
-            try
+            /* pass "false" to GetConfigurationPath to default to the global
+             * config when user config not found
+             */
+            string configFile = GetConfigurationPath(false);
+            if (null != configFile && File.Exists(configFile))
             {
-                return (PasswordSequenceConfiguration)serializer.Deserialize(XmlReader.Create(configStream));
+                /* TODO: replace xsd path with local path instead of web path
+                 * that could change?
+                 */
+                XmlSerializer serializer = new XmlSerializer(typeof(PasswordSequenceConfiguration), "http://quasivirtuel.com/PasswordSequenceConfiguration.xsd");
+                FileStream configStream = File.OpenRead(configFile);
+                try
+                {
+                    return (PasswordSequenceConfiguration)serializer.Deserialize(XmlReader.Create(configStream));
+                }
+                finally
+                {
+                    configStream.Close();
+                }
             }
-            finally
+            else
             {
-                configStream.Close();
+                /* Config file not found; create empty config */
+                return new PasswordSequenceConfiguration(true);
+                /* TODO: pop up an error message or something? */
             }
         }
 
         public void Save(PasswordSequenceConfiguration configuration)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(PasswordSequenceConfiguration), "http://quasivirtuel.com/PasswordSequenceConfiguration.xsd");
-            FileStream configStream = File.Open(GetConfigurationPath(), FileMode.Create);
-            try
+            /* pass "true" to GetConfigurationPath to default to the user config
+             * even when it doesn't exist yet; we'll create it here
+             */
+            string configFile = GetConfigurationPath(true);
+            if (null != configFile)
             {
-                serializer.Serialize(configStream, configuration);
+                XmlSerializer serializer = new XmlSerializer(typeof(PasswordSequenceConfiguration), "http://quasivirtuel.com/PasswordSequenceConfiguration.xsd");
+
+                /* create the config file's directory if needed */
+                Directory.CreateDirectory(Path.GetDirectoryName(configFile));
+
+                /* open the file for writing, creating a new one if needed */
+                FileStream configStream = File.Open(configFile, FileMode.Create);
+
+                try
+                {
+                    serializer.Serialize(configStream, configuration);
+                }
+                finally
+                {
+                    configStream.Close();
+                }
             }
-            finally
-            {
-                configStream.Close();
-            }
+            /* TODO: pop up an error message or something? */
         }
 
         public string GenerateSequence(PasswordSequenceConfiguration globalConfiguration, Random randomSeed)
