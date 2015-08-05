@@ -24,8 +24,32 @@ namespace Sequencer.Configuration
 
             BackingList = new List<char>();
             foreach (string s in contentArray)
+            {
                 if (s.Length == 1)
-                    BackingList.Add(s[0]);
+                {
+                    /* if the item is a single backslash, it probably preceeded
+                     * a space character, so add a literal space.
+                     */
+                    if (s[0] == '\\')
+                    {
+                        BackingList.Add(' ');
+                    }
+                    else
+                    {
+                        BackingList.Add(s[0]);
+                    }
+                }
+                else if (s.Length == 2 && s[0] == '\\')
+                {
+                    /* if the item is a two-character sequence and the first
+                     * character is a backslash, include the second character
+                     * instead (allows adding a literal backslash since we
+                     * treat it special above; and any other special sequences
+                     * we may add in the future).
+                     */
+                    BackingList.Add(s[1]);
+                }
+            }
         }
 
         public override void WriteXml(XmlWriter writer)
@@ -35,6 +59,8 @@ namespace Sequencer.Configuration
             {
                 if (configString.Length > 0)
                     configString.Append(" ");
+                if (c == '\\' || c == ' ')
+                    configString.Append('\\');
                 configString.Append(c);
             }
             writer.WriteString(configString.ToString());
@@ -65,7 +91,27 @@ namespace Sequencer.Configuration
             foreach (string s in contentArray)
                 for (int i = 0; i < s.Length; i++)
                 {
-                    BackingList.Add(s[i]);
+                    /* if the first character in an item is a backslash, then it
+                     * escapes the next character, or it escapes a space
+                     */
+                    if (s[i] == '\\')
+                    {
+                        if (i+1 < s.Length)
+                        {
+                            /* length > 1 means it escapes the next char */
+                            BackingList.Add(s[i+1]);
+                            i+=1;
+                        }
+                        else if (s.Length == 1)
+                        {
+                            /* just a backslash means it escaped a space */
+                            BackingList.Add(' ');
+                        }
+                    }
+                    else
+                    {
+                        BackingList.Add(s[i]);
+                    }
                 }
         }
 
@@ -78,6 +124,8 @@ namespace Sequencer.Configuration
             {
                 if (configString.Length > 0)
                     configString.Append(" ");
+                if (c == '\\' || c == ' ')
+                    configString.Append('\\');
                 configString.Append(c);
             }
             writer.WriteString(configString.ToString());
