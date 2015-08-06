@@ -347,9 +347,8 @@ namespace Sequencer.Forms
         {
             try
             {
-                ReadUserInputFor<CharacterSequenceItem, bool>("Include default characters [true|false]", "[true|false]", i => i.Characters.Override);
-                ReadUserInputFor<WordSequenceItem, bool>("Include default words [true|false]", "[true|false]", i => i.Words.Override);
-
+                ReadUserInputFor<CharacterSequenceItem, bool>("Omit default characters [true|false]", "[true|false]", i => i.Characters.Override);
+                ReadUserInputFor<WordSequenceItem, bool>("Omit default words [true|false]", "[true|false]", i => i.Words.Override);
             }
             catch (NullReferenceException)
             {
