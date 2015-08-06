@@ -16,34 +16,44 @@ namespace WordSequence
 {
     public class Sequencer : CustomPwGenerator
     {
-        /* if returnEmptyConfig is true, or a user config file is found, returns
-         * the path to the user config file.
+        /* If getting a file name for writing, or a user config file is found,
+         * returns the path to the user config file.
          *
-         * if returnEmptyConfig is false, or the user config file path is not
-         * specified, and the user config file is not found, returns the path to
-         * the global config.
+         * If getting a file name for reading, and the user config file is not
+         * found, returns the path to the global config.
          *
-         * Note reading the global config at startup (for a missing user config
-         * file) and then writing the user config after changing settings, allows
-         * a default configuration to be specified in the global config.
+         * If user config file is not specified, return global config file.
+         *
+         * If neither config file is specified, returns null.
+         *
+         * Note reading the global config at startup and then writing the user
+         * config after changing settings, allows a default configuration to be
+         * copied from the global config to the user config on first use.
          */
-        private string GetConfigurationPath(bool returnEmptyConfig)
+        private string GetConfigurationPath(bool getPathForWrite)
         {
             string config = System.Configuration.ConfigurationManager.AppSettings["userConfigPath"];
 
             if (null != config)
             {
+              if (!System.IO.Path.IsPathRooted(config))
+              {
                 config = Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                        config);
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    config);
+              }
             }
 
-            if (null == config || !(returnEmptyConfig || File.Exists(config)))
+            if (null == config || !(getPathForWrite || File.Exists(config)))
             {
+              config = System.Configuration.ConfigurationManager.AppSettings["defaultConfigPath"];
+              if (null == config)
+              {
                 config = System.Configuration.ConfigurationManager.AppSettings["configPath"];
+              }
             }
 
-            if (null != config && (returnEmptyConfig || File.Exists(config)))
+            if (null != config && (getPathForWrite || File.Exists(config)))
             {
                 return System.IO.Path.GetFullPath(config);
             }
@@ -108,7 +118,9 @@ namespace WordSequence
                     configStream.Close();
                 }
             }
-            /* TODO: pop up an error message or something? */
+            /* TODO: should we pop up an error message or something in the
+             * "else" case (i.e. when getting config file path fails)?
+             */
         }
 
         public string GenerateSequence(PasswordSequenceConfiguration globalConfiguration, Random randomSeed)

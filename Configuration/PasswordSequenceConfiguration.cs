@@ -21,13 +21,8 @@ namespace Sequencer.Configuration
          * the config file fails somehow; the argument is unused but I don't
          * know a better way to do it
          */
-        public PasswordSequenceConfiguration(bool throwaway)
+        public PasswordSequenceConfiguration(bool throwaway):this()
         {
-            XmlNamespace = new XmlSerializerNamespaces();
-            XmlNamespace.Add(string.Empty, "http://quasivirtuel.com/PasswordSequenceConfiguration.xsd");
-
-            Sequence = new List<SequenceItem>();
-
             DefaultWords = new WordList();
             DefaultCharacters = new CharacterList();
             DefaultSubstitutions = new List<BaseSubstitution>();
