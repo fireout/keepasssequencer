@@ -74,7 +74,9 @@ namespace WordSequence
                 /* TODO: replace xsd path with local path instead of web path
                  * that could change?
                  */
-                XmlSerializer serializer = new XmlSerializer(typeof(PasswordSequenceConfiguration), "http://quasivirtuel.com/PasswordSequenceConfiguration.xsd");
+                XmlSerializer serializer =
+                    new XmlSerializer(typeof(PasswordSequenceConfiguration),
+                                      "http://quasivirtuel.com/PasswordSequenceConfiguration.xsd");
                 FileStream configStream = File.OpenRead(configFile);
                 try
                 {
@@ -101,7 +103,9 @@ namespace WordSequence
             string configFile = GetConfigurationPath(true);
             if (null != configFile)
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(PasswordSequenceConfiguration), "http://quasivirtuel.com/PasswordSequenceConfiguration.xsd");
+                XmlSerializer serializer =
+                    new XmlSerializer(typeof(PasswordSequenceConfiguration),
+                                      "http://quasivirtuel.com/PasswordSequenceConfiguration.xsd");
 
                 /* create the config file's directory if needed */
                 Directory.CreateDirectory(Path.GetDirectoryName(configFile));
@@ -123,32 +127,45 @@ namespace WordSequence
              */
         }
 
-        public string GenerateSequence(PasswordSequenceConfiguration globalConfiguration, Random randomSeed)
+        public string GenerateSequence(PasswordSequenceConfiguration globalConfiguration,
+                                       CryptoRandomRange cryptoRandom)
         {
             string targetSequence = string.Empty;
             foreach (SequenceItem sequenceItem in globalConfiguration.Sequence)
-                if (sequenceItem.Probability != PercentEnum.Never && randomSeed.Next(101) <= (int)sequenceItem.Probability)
-                    targetSequence += GenerateSequenceItem(sequenceItem, globalConfiguration, randomSeed);
+            {
+                if (sequenceItem.Probability != PercentEnum.Never &&
+                        (int)cryptoRandom.GetRandomInRange(0, 100) <= (int)sequenceItem.Probability)
+                {
+                    targetSequence += GenerateSequenceItem(sequenceItem, globalConfiguration, cryptoRandom);
+                }
+            }
 
             return targetSequence;
         }
 
-        public string GenerateSequenceItem(SequenceItem sequenceItem, PasswordSequenceConfiguration globalConfiguration, Random randomSeed)
+        public string GenerateSequenceItem(SequenceItem                  sequenceItem,
+                                           PasswordSequenceConfiguration globalConfiguration,
+                                           CryptoRandomRange             cryptoRandom)
         {
             if (sequenceItem is CharacterSequenceItem)
-                return GenerateSequenceItem((CharacterSequenceItem)sequenceItem, globalConfiguration, randomSeed);
+                return GenerateSequenceItem((CharacterSequenceItem)sequenceItem, globalConfiguration, cryptoRandom);
             if (sequenceItem is WordSequenceItem)
-                return GenerateSequenceItem((WordSequenceItem)sequenceItem, globalConfiguration, randomSeed);
+                return GenerateSequenceItem((WordSequenceItem)sequenceItem, globalConfiguration, cryptoRandom);
             return null;
         }
 
-        public string GenerateSequenceItem(CharacterSequenceItem characterItem, PasswordSequenceConfiguration globalConfiguration, Random randomSeed)
+        public string GenerateSequenceItem(CharacterSequenceItem         characterItem,
+                                           PasswordSequenceConfiguration globalConfiguration,
+                                           CryptoRandomRange             cryptoRandom)
         {
             string targetCharacterSet = string.Empty;
             List<char> characterList = null;
             int length = characterItem.Length;
-            if (characterItem.LengthStrength != StrengthEnum.Full && randomSeed.Next(101) < (int)characterItem.LengthStrength)
-                length = randomSeed.Next(characterItem.Length + 1);
+            if (characterItem.LengthStrength != StrengthEnum.Full &&
+                (int)cryptoRandom.GetRandomInRange(0, 100) < (int)characterItem.LengthStrength)
+            {
+              length = (int)cryptoRandom.GetRandomInRange(0, characterItem.Length);
+            }
 
             while (targetCharacterSet.Length < length)
             {
@@ -161,7 +178,7 @@ namespace WordSequence
                         characterList.AddRange(globalConfiguration.DefaultCharacters);
                 }
 
-                int charPos = randomSeed.Next(characterList.Count);
+                int charPos = (int)cryptoRandom.GetRandomInRange(0, (ulong)characterList.Count-1);
                 targetCharacterSet += characterList[charPos];
                 if (!characterItem.AllowDuplicate)
                     characterList.RemoveAt(charPos);
@@ -170,7 +187,9 @@ namespace WordSequence
             return targetCharacterSet;
         }
 
-        public string GenerateSequenceItem(WordSequenceItem wordItem, PasswordSequenceConfiguration globalConfiguration, Random randomSeed)
+        public string GenerateSequenceItem(WordSequenceItem              wordItem,
+                                           PasswordSequenceConfiguration globalConfiguration,
+                                           CryptoRandomRange             cryptoRandom)
         {
             string targetWord;
             {
@@ -180,19 +199,27 @@ namespace WordSequence
                 if (wordItem.Words == null || !wordItem.Words.Override)
                     wordList.AddRange(globalConfiguration.DefaultWords);
 
-                targetWord = wordList[randomSeed.Next(wordList.Count)];
+                targetWord = wordList[(int)cryptoRandom.GetRandomInRange(0, (ulong)wordList.Count-1)];
             }
 
             if (wordItem.Substitution > PercentEnum.Never)
             {
                 List<BaseSubstitution> applicableSubstitution = new List<BaseSubstitution>();
                 if (wordItem.Substitutions != null)
+                {
                     applicableSubstitution.AddRange(wordItem.Substitutions);
+                }
                 if (wordItem.Substitutions == null || !wordItem.Substitutions.Override)
+                {
                     applicableSubstitution.AddRange(globalConfiguration.DefaultSubstitutions);
+                }
                 foreach (BaseSubstitution substitution in applicableSubstitution)
-                    if (randomSeed.Next(101) <= (int)wordItem.Substitution)
+                {
+                    if ((int)cryptoRandom.GetRandomInRange(0, 100) <= (int)wordItem.Substitution)
+                    {
                         targetWord = ApplySubstitutionItem(substitution, targetWord);
+                    }
+                }
             }
 
             if (wordItem.Capitalize == CapitalizeEnum.Proper)
@@ -203,7 +230,7 @@ namespace WordSequence
             {
                 string capitalizedWord = string.Empty;
                 foreach (char c in targetWord)
-                    if (randomSeed.Next(101) <= (int)wordItem.Capitalize)
+                    if ((int)cryptoRandom.GetRandomInRange(0, 100) <= (int)wordItem.Capitalize)
                         capitalizedWord += c.ToString().ToUpper();
                     else
                         capitalizedWord += c.ToString().ToLower();
@@ -269,7 +296,7 @@ namespace WordSequence
 
         public override ProtectedString Generate(PwProfile prf, CryptoRandomStream crsRandomSource)
         {
-            return new ProtectedString(true, GenerateSequence(Load(), new Random((int)(crsRandomSource.GetRandomUInt64() % int.MaxValue))));
+            return new ProtectedString(true, GenerateSequence(Load(), new CryptoRandomRange(crsRandomSource)));
         }
 
         public override string GetOptions(string strCurrentOptions)
@@ -290,9 +317,11 @@ namespace WordSequence
             }
         }
 
-        private static readonly PwUuid UUID = new PwUuid(new byte[] {
-			0x53, 0x81, 0x36, 0x0E, 0xA7, 0xFC, 0x48, 0x36,
-			0x9E, 0x9F, 0xA4, 0x4F, 0x1A, 0xF0, 0x58, 0x37 });
+        private static readonly PwUuid UUID =
+            new PwUuid(new byte[] {
+                0x53, 0x81, 0x36, 0x0E, 0xA7, 0xFC, 0x48, 0x36,
+                0x9E, 0x9F, 0xA4, 0x4F, 0x1A, 0xF0, 0x58, 0x37
+            });
         public override PwUuid Uuid
         {
             get { return UUID; }
@@ -303,3 +332,5 @@ namespace WordSequence
         }
     }
 }
+
+/* vim: set ts=4 sw=4 et: */
