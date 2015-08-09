@@ -12,15 +12,16 @@ namespace WordSequence.ItemGenerator
             _globalConfiguration = globalConfiguration;
         }
 
-        public string Generate(CharacterSequenceItem item, int seed)
+        public string Generate(CharacterSequenceItem item, CryptoRandomRange cryptoRandom)
         {
-            Random randomSeed = new Random(seed);
-
             string targetCharacterSet = string.Empty;
             List<char> characterList = null;
             int length = item.Length;
-            if (item.LengthStrength != StrengthEnum.Full && randomSeed.Next(101) < (int)item.LengthStrength)
-                length = randomSeed.Next(item.Length + 1);
+            if (item.LengthStrength != StrengthEnum.Full &&
+                cryptoRandom.GetRandomInRange(0,100) < (int)item.LengthStrength)
+            {
+                length = cryptoRandom.GetRandomInRange(0, item.Length);
+            }
 
             while (targetCharacterSet.Length < length)
             {
@@ -33,14 +34,13 @@ namespace WordSequence.ItemGenerator
                         characterList.AddRange(_globalConfiguration.DefaultCharacters);
                 }
 
-                int charPos = randomSeed.Next(characterList.Count);
+                int charPos = cryptoRandom.GetRandomInRange(0, characterList.Count-1);
                 targetCharacterSet += characterList[charPos];
                 if (!item.AllowDuplicate)
                     characterList.RemoveAt(charPos);
             }
 
             return targetCharacterSet;
-
         }
     }
 }

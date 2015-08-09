@@ -91,6 +91,7 @@
     <Compile Include="Configuration\WholeSubstitution.cs" />
     <Compile Include="Configuration\WordList.cs" />
     <Compile Include="Configuration\WordSequenceItem.cs" />
+    <Compile Include="CryptoRandomRange.cs" />
     <Compile Include="Forms\OrientedTextLabel.cs">
       <SubType>Component</SubType>
     </Compile>

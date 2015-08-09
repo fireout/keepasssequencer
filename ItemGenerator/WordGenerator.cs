@@ -12,9 +12,8 @@ namespace WordSequence.ItemGenerator
             _globalConfiguration = globalConfiguration;
         }
 
-        public string Generate(WordSequenceItem item, int seed)
+        public string Generate(WordSequenceItem item, CryptoRandomRange cryptoRandom)
         {
-            Random randomSeed = new Random(seed);
             string targetWord;
             {
                 List<string> wordList = new List<string>();
@@ -23,12 +22,10 @@ namespace WordSequence.ItemGenerator
                 if (item.Words == null || !item.Words.Override)
                     wordList.AddRange(_globalConfiguration.DefaultWords);
 
-                targetWord = wordList[randomSeed.Next(wordList.Count)];
+                targetWord = wordList[cryptoRandom(0, wordList.Count-1)];
             }
 
-
             return targetWord;
-
         }
     }
 }
