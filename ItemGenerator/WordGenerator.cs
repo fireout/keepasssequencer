@@ -22,10 +22,12 @@ namespace WordSequence.ItemGenerator
                 if (item.Words == null || !item.Words.Override)
                     wordList.AddRange(_globalConfiguration.DefaultWords);
 
-                targetWord = wordList[cryptoRandom(0, wordList.Count-1)];
+                targetWord = wordList[cryptoRandom.GetRandomInRange(0, wordList.Count-1)];
             }
 
             return targetWord;
         }
     }
 }
+
+/* vim: set ts=4 sw=4 et: */
