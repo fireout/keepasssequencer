@@ -32,7 +32,12 @@ namespace WordSequence
          */
         private string GetConfigurationPath(bool getPathForWrite)
         {
-            string config = System.Configuration.ConfigurationManager.AppSettings["userConfigPath"];
+            /* Getting config path from a mashup of:
+             *  http://stackoverflow.com/a/5191101/1390430
+             *  http://stackoverflow.com/a/2272628/1390430
+             */
+            var appConfig = System.Configuration.ConfigurationManager.OpenExeConfiguration(this.GetType().Assembly.Location);
+            string config = appConfig.AppSettings.Settings["userConfigPath"].Value;
 
             if (null != config)
             {
@@ -46,10 +51,10 @@ namespace WordSequence
 
             if (null == config || !(getPathForWrite || File.Exists(config)))
             {
-              config = System.Configuration.ConfigurationManager.AppSettings["defaultConfigPath"];
+              config = appConfig.AppSettings.Settings["defaultConfigPath"].Value;
               if (null == config)
               {
-                config = System.Configuration.ConfigurationManager.AppSettings["configPath"];
+                config = appConfig.AppSettings.Settings["configPath"].Value;
               }
             }
 
