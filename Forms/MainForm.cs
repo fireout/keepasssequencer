@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using Sequencer.Configuration;
+using KeePassLib.Cryptography;
 
 namespace Sequencer.Forms
 {
@@ -46,7 +47,6 @@ namespace Sequencer.Forms
         private ColumnHeader columnHeader1;
         private ColumnHeader columnHeader2;
         private ColumnHeader columnHeader3;
-        private ColumnHeader columnHeader4;
         private SubstitutionListControl substitutionList1;
 
         public MainForm()
@@ -88,6 +88,19 @@ namespace Sequencer.Forms
             SequenceItem lastSelectedItem = GetSelectedSequenceItem<SequenceItem>();
             lvSequence.Items.Clear();
 
+            /* Get a decent randomizer for samples in case the user actually uses
+             * these for some reason...
+             * This was copied from KeePass code which also throws in some
+             * additional entropy but for the sample we don't care.
+             */
+            byte[] pbKey = CryptoRandom.Instance.GetRandomBytes(256);
+            WordSequence.CryptoRandomRange randomizer =
+                new WordSequence.CryptoRandomRange(
+                        new CryptoRandomStream(CrsAlgorithm.Salsa20, pbKey));
+
+            WordSequence.Sequencer sequencer = new WordSequence.Sequencer();
+            PasswordSequenceConfiguration config = sequencer.Load();
+
             foreach (SequenceItem sequenceItem in Configuration.Sequence)
             {
                 ListViewItem listItem = new ListViewItem();
@@ -108,15 +121,28 @@ namespace Sequencer.Forms
                 else if (sequenceItem is WordSequenceItem)
                 {
                     WordSequenceItem wordSequenceItem = (WordSequenceItem)sequenceItem;
+
                     listItem.Text = "Word";
-                    listItem.SubItems.Add(string.Format("Capitalize: {0}, Substitution: {1}, Override: {2}",
-                        wordSequenceItem.Capitalize.ToString(),
-                        wordSequenceItem.Substitution.ToString(),
-                        wordSequenceItem.Words != null ? wordSequenceItem.Words.Override.ToString().ToLower() : "false"));
-                    listItem.SubItems.Add(wordSequenceItem.Words != null ? wordSequenceItem.Words.ToString() : "(Defaults)");
+
+                    String sampleString = sequencer.GenerateSequenceItem(wordSequenceItem, config, randomizer);
+                    
+                    for (int i=1; i<5; i+=1)
+                    {
+                      sampleString += " " + sequencer.GenerateSequenceItem(wordSequenceItem, config, randomizer);
+                    }
+
+                    /* TODO: substitutions aren't applying at this point...why? 
+                     * Answer: I think it's because modifying substitution list
+                     * doesn't save the config! Should save config after editing
+                     * those fields, and refresh this list, I guess.
+                     * Need to check if all word lists are applied, too.
+                     */
+                    listItem.SubItems.Add(string.Format(sampleString));
                 }
                 if (sequenceItem == lastSelectedItem)
+                {
                     listItem.Selected = true;
+                }
                 lvSequence.Items.Add(listItem);
             }
             UpdateToolstipButtons();
@@ -383,6 +409,7 @@ namespace Sequencer.Forms
         private void InitializeComponent()
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.substitutionList1 = new Sequencer.Forms.SubstitutionListControl();
             this.label3 = new System.Windows.Forms.Label();
             this.txtCharacterList = new System.Windows.Forms.TextBox();
             this.txtWordList = new System.Windows.Forms.TextBox();
@@ -395,7 +422,6 @@ namespace Sequencer.Forms
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripDropDownButton();
@@ -414,7 +440,6 @@ namespace Sequencer.Forms
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbUp = new System.Windows.Forms.ToolStripButton();
             this.tsbDown = new System.Windows.Forms.ToolStripButton();
-            this.substitutionList1 = new Sequencer.Forms.SubstitutionListControl();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -448,6 +473,19 @@ namespace Sequencer.Forms
             this.splitContainer1.SplitterDistance = 266;
             this.splitContainer1.TabIndex = 0;
             // 
+            // substitutionList1
+            // 
+            this.substitutionList1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.substitutionList1.Location = new System.Drawing.Point(13, 163);
+            this.substitutionList1.Name = "substitutionList1";
+            this.substitutionList1.Size = new System.Drawing.Size(973, 100);
+            this.substitutionList1.Substitutions = null;
+            this.substitutionList1.TabIndex = 5;
+            this.substitutionList1.SelectedIndexChanged += new System.EventHandler(this.substitutionList1_SelectedIndexChanged);
+            this.substitutionList1.SubstitutionChanged += new System.EventHandler(this.substitutionList1_SubstitutionChanged);
+            // 
             // label3
             // 
             this.label3.AutoSize = true;
@@ -459,7 +497,7 @@ namespace Sequencer.Forms
             // 
             // txtCharacterList
             // 
-            this.txtCharacterList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.txtCharacterList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCharacterList.Location = new System.Drawing.Point(12, 100);
             this.txtCharacterList.Multiline = true;
@@ -470,7 +508,7 @@ namespace Sequencer.Forms
             // 
             // txtWordList
             // 
-            this.txtWordList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.txtWordList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWordList.Location = new System.Drawing.Point(13, 30);
             this.txtWordList.Multiline = true;
@@ -535,8 +573,7 @@ namespace Sequencer.Forms
             this.lvSequence.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
-            this.columnHeader3,
-            this.columnHeader4});
+            this.columnHeader3});
             this.lvSequence.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvSequence.FullRowSelect = true;
             this.lvSequence.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
@@ -558,12 +595,8 @@ namespace Sequencer.Forms
             // 
             // columnHeader3
             // 
-            this.columnHeader3.Text = "Properties";
-            this.columnHeader3.Width = 273;
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "Content";
+            this.columnHeader3.Text = "Sample";
+            this.columnHeader3.Width = 442;
             // 
             // toolStrip1
             // 
@@ -722,19 +755,6 @@ namespace Sequencer.Forms
             this.tsbDown.Size = new System.Drawing.Size(23, 22);
             this.tsbDown.Text = "tsbDown";
             this.tsbDown.Click += new System.EventHandler(this.tsbDown_Click);
-            // 
-            // substitutionList1
-            // 
-            this.substitutionList1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.substitutionList1.Location = new System.Drawing.Point(13, 163);
-            this.substitutionList1.Name = "substitutionList1";
-            this.substitutionList1.Size = new System.Drawing.Size(973, 100);
-            this.substitutionList1.Substitutions = null;
-            this.substitutionList1.TabIndex = 5;
-            this.substitutionList1.SelectedIndexChanged += new System.EventHandler(this.substitutionList1_SelectedIndexChanged);
-            this.substitutionList1.SubstitutionChanged += new System.EventHandler(this.substitutionList1_SubstitutionChanged);
             // 
             // MainForm
             // 
