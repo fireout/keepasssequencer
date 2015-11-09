@@ -106,48 +106,43 @@ namespace Sequencer.Forms
 
                 listItem.Tag = sequenceItem;
 
+                string itemText = "";
+
+                string sampleString = sequencer.GenerateSequenceItem(sequenceItem, config, randomizer);
+
+                for (int i=1; i<5; i+=1)
+                {
+                    sampleString += " " + sequencer.GenerateSequenceItem(sequenceItem, config, randomizer);
+                }
+                listItem.SubItems.Add(string.Format(sampleString));
+                /* TODO: substitutions aren't applying at this point...why? 
+                 * Answer: I think it's because modifying substitution list
+                 * doesn't save the config! Should save config after editing
+                 * those fields, and refresh this list, I guess.
+                 * Need to check if all word lists are applied, too.
+                 */
+
                 if (sequenceItem is CharacterSequenceItem)
                 {
-                    CharacterSequenceItem characterSequenceItem = (CharacterSequenceItem)sequenceItem;
-                    listItem.Text = "Characters (" + sequenceItem.Probability.ToString() + ")";
-                    listItem.SubItems.Add(string.Format("Length: {0} ({1}), Override: {2}",
-                        characterSequenceItem.Length,
-                        characterSequenceItem.LengthStrength.ToString(),
-                        characterSequenceItem.Characters != null ? characterSequenceItem.Characters.Override.ToString().ToLower() : "false"));
-                    listItem.SubItems.Add(characterSequenceItem.Characters != null ? characterSequenceItem.Characters.ToString() : "(Defaults)");
+                    itemText += "Characters";
                 }
                 else if (sequenceItem is WordSequenceItem)
                 {
-                    WordSequenceItem wordSequenceItem = (WordSequenceItem)sequenceItem;
-                    string itemText = "Word";
-
-                    if (sequenceItem.Probability == Sequencer.Configuration.PercentEnum.Never)
-                    {
-                        listItem.Font = new Font(listItem.Font, listItem.Font.Style | FontStyle.Strikeout);
-                    }
-                    else if (sequenceItem.Probability < Sequencer.Configuration.PercentEnum.Always)
-                    {
-                        listItem.Font = new Font(listItem.Font, listItem.Font.Style | FontStyle.Italic);
-                        itemText += " (" + sequenceItem.Probability.ToString() + "%)";
-                    }
-
-                    listItem.Text = itemText;
-
-                    String sampleString = sequencer.GenerateSequenceItem(wordSequenceItem, config, randomizer);
-                    
-                    for (int i=1; i<5; i+=1)
-                    {
-                      sampleString += " " + sequencer.GenerateSequenceItem(wordSequenceItem, config, randomizer);
-                    }
-
-                    /* TODO: substitutions aren't applying at this point...why? 
-                     * Answer: I think it's because modifying substitution list
-                     * doesn't save the config! Should save config after editing
-                     * those fields, and refresh this list, I guess.
-                     * Need to check if all word lists are applied, too.
-                     */
-                    listItem.SubItems.Add(string.Format(sampleString));
+                    itemText += "Word";
                 }
+
+                if (sequenceItem.Probability == Sequencer.Configuration.PercentEnum.Never)
+                {
+                    listItem.Font = new Font(listItem.Font, listItem.Font.Style | FontStyle.Strikeout);
+                    listItem.ForeColor = System.Drawing.Color.Gray;
+                }
+                else if (sequenceItem.Probability < Sequencer.Configuration.PercentEnum.Always)
+                {
+                    listItem.Font = new Font(listItem.Font, listItem.Font.Style | FontStyle.Italic);
+                    itemText += " (" + sequenceItem.Probability.ToString() + "%)";
+                }
+                listItem.Text = itemText;
+
                 if (sequenceItem == lastSelectedItem)
                 {
                     listItem.Selected = true;
@@ -582,6 +577,7 @@ namespace Sequencer.Forms
             // columnHeader1
             // 
             this.columnHeader1.Text = "Type";
+            this.columnHeader1.Width = 111;
             // 
             // columnHeader3
             // 
