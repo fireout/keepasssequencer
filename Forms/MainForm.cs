@@ -98,7 +98,6 @@ namespace Sequencer.Forms
                         new CryptoRandomStream(CrsAlgorithm.Salsa20, pbKey));
 
             WordSequence.Sequencer sequencer = new WordSequence.Sequencer();
-            PasswordSequenceConfiguration config = sequencer.Load();
 
             foreach (SequenceItem sequenceItem in Configuration.Sequence)
             {
@@ -108,11 +107,11 @@ namespace Sequencer.Forms
 
                 string itemText = "";
 
-                string sampleString = sequencer.GenerateSequenceItem(sequenceItem, config, randomizer);
+                string sampleString = sequencer.GenerateSequenceItem(sequenceItem, Configuration, randomizer);
 
                 for (int i=1; i<5; i+=1)
                 {
-                    sampleString += " " + sequencer.GenerateSequenceItem(sequenceItem, config, randomizer);
+                    sampleString += " " + sequencer.GenerateSequenceItem(sequenceItem, Configuration, randomizer);
                 }
                 listItem.SubItems.Add(string.Format(sampleString));
                 /* TODO: substitutions aren't applying at this point...why? 
