@@ -4,6 +4,8 @@ namespace Sequencer.Configuration
 {
     public abstract class BaseSubstitution
     {
+        protected BaseSubstitution() { Replace = ""; With = ""; CaseSensitive = false; }
+
         [XmlAttribute("replace")]
         public string Replace { get; set; }
         [XmlAttribute("with")]

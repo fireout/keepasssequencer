@@ -42,10 +42,23 @@ namespace Sequencer.Configuration
         public bool AllowDuplicate { get; set; }
 
         [XmlAttribute("length")]
-        public byte Length { get; set; }
+        public uint Length { get; set; }
 
         [XmlIgnore]
-        public StrengthEnum LengthStrength { get; set; }
+        private StrengthEnum _myLenStren;
+        public StrengthEnum LengthStrength
+        {
+            get { return _myLenStren; }
+            set
+            {
+                if (value > StrengthEnum.Full)
+                    _myLenStren = StrengthEnum.Full;
+                else if (value < 0)
+                    _myLenStren = 0;
+                else
+                    _myLenStren = value;
+            }
+        }
 
         [XmlAttribute("lengthStrength")]
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
@@ -54,6 +67,5 @@ namespace Sequencer.Configuration
             get { return LengthStrength.ToString().ToLower(); }
             set { LengthStrength = (StrengthEnum)Enum.Parse(typeof(StrengthEnum), value, true); }
         }
-
     }
 }

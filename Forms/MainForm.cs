@@ -374,7 +374,7 @@ namespace Sequencer.Forms
 
         private void lengthToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ReadUserInputFor<CharacterSequenceItem, byte>("Length [1-255]", "[1-255]", i => i.Length);
+            ReadUserInputFor<CharacterSequenceItem, uint>("Length [1-255]", "[1-255]", i => i.Length);
         }
 
         private void lengthStrengthToolStripMenuItem_Click(object sender, EventArgs e)

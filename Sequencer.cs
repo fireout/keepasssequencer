@@ -139,7 +139,7 @@ namespace WordSequence
             foreach (SequenceItem sequenceItem in globalConfiguration.Sequence)
             {
                 if (sequenceItem.Probability != PercentEnum.Never &&
-                        (int)cryptoRandom.GetRandomInRange(0, 100) <= (int)sequenceItem.Probability)
+                    (int)cryptoRandom.GetRandomInRange(1, 100) <= (int)sequenceItem.Probability)
                 {
                     targetSequence += GenerateSequenceItem(sequenceItem, globalConfiguration, cryptoRandom);
                 }
@@ -165,11 +165,12 @@ namespace WordSequence
         {
             string targetCharacterSet = string.Empty;
             List<char> characterList = null;
-            int length = characterItem.Length;
-            if (characterItem.LengthStrength != StrengthEnum.Full &&
-                (int)cryptoRandom.GetRandomInRange(0, 100) < (int)characterItem.LengthStrength)
+            uint length = characterItem.Length;
+            if (length > 0 &&
+                characterItem.LengthStrength != StrengthEnum.Full &&
+                (int)cryptoRandom.GetRandomInRange(1, 100) <= (uint)characterItem.LengthStrength)
             {
-              length = (int)cryptoRandom.GetRandomInRange(0, characterItem.Length);
+              length = (uint)cryptoRandom.GetRandomInRange(0, characterItem.Length-1);
             }
 
             while (targetCharacterSet.Length < length)
@@ -220,7 +221,7 @@ namespace WordSequence
                 }
                 foreach (BaseSubstitution substitution in applicableSubstitution)
                 {
-                    if ((int)cryptoRandom.GetRandomInRange(0, 100) <= (int)wordItem.Substitution)
+                    if ((int)cryptoRandom.GetRandomInRange(1, 100) <= (int)wordItem.Substitution)
                     {
                         targetWord = ApplySubstitutionItem(substitution, targetWord);
                     }
@@ -235,7 +236,7 @@ namespace WordSequence
             {
                 string capitalizedWord = string.Empty;
                 foreach (char c in targetWord)
-                    if ((int)cryptoRandom.GetRandomInRange(0, 100) <= (int)wordItem.Capitalize)
+                    if ((int)cryptoRandom.GetRandomInRange(1, 100) <= (int)wordItem.Capitalize)
                         capitalizedWord += c.ToString().ToUpper();
                     else
                         capitalizedWord += c.ToString().ToLower();

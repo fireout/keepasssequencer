@@ -37,7 +37,23 @@ namespace Sequencer.Configuration
         public SubstitutionList Substitutions { get; set; }
 
         [XmlIgnore]
-        public CapitalizeEnum Capitalize { get; set; }
+        private CapitalizeEnum _myCapChance;
+        public CapitalizeEnum Capitalize
+        {
+            get
+            {
+                return _myCapChance;
+            }
+            set
+            {
+                if (value > CapitalizeEnum.Always && value != CapitalizeEnum.Proper)
+                    _myCapChance = CapitalizeEnum.Always;
+                else if (value < CapitalizeEnum.Never)
+                    _myCapChance = CapitalizeEnum.Never;
+                else
+                    _myCapChance = value;
+            }
+        }
 
         [XmlAttribute("capitalize")]
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
@@ -48,7 +64,19 @@ namespace Sequencer.Configuration
         }
 
         [XmlIgnore]
-        public PercentEnum Substitution { get; set; }
+        private PercentEnum _mySubstPercent;
+        public PercentEnum Substitution {
+            get { return _mySubstPercent; }
+            set
+            {
+                if (value > PercentEnum.Always)
+                    _mySubstPercent = PercentEnum.Always;
+                else if (value < PercentEnum.Never)
+                    _mySubstPercent = PercentEnum.Never;
+                else
+                    _mySubstPercent = value;
+            }
+        }
 
         [XmlAttribute("substitution")]
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
