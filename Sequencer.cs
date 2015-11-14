@@ -173,9 +173,10 @@ namespace WordSequence
               length = (uint)cryptoRandom.GetRandomInRange(0, characterItem.Length-1);
             }
 
-            while (targetCharacterSet.Length < length)
+            while (targetCharacterSet.Length < length &&
+                   (null == characterList || characterList.Count > 0))
             {
-                if (characterList == null || characterList.Count == 0)
+                if (characterList == null)
                 {
                     characterList = new List<char>();
                     if (characterItem.Characters != null)
@@ -184,10 +185,13 @@ namespace WordSequence
                         characterList.AddRange(globalConfiguration.DefaultCharacters);
                 }
 
-                int charPos = (int)cryptoRandom.GetRandomInRange(0, (ulong)characterList.Count-1);
-                targetCharacterSet += characterList[charPos];
-                if (!characterItem.AllowDuplicate)
-                    characterList.RemoveAt(charPos);
+                if (characterList.Count > 0)
+                {
+                    int charPos = (int)cryptoRandom.GetRandomInRange(0, (ulong)characterList.Count-1);
+                    targetCharacterSet += characterList[charPos];
+                    if (!characterItem.AllowDuplicate)
+                        characterList.RemoveAt(charPos);
+                }
             }
 
             return targetCharacterSet;
@@ -197,7 +201,7 @@ namespace WordSequence
                                            PasswordSequenceConfiguration globalConfiguration,
                                            CryptoRandomRange             cryptoRandom)
         {
-            string targetWord;
+            string targetWord = string.Empty;
             {
                 List<string> wordList = new List<string>();
                 if (wordItem.Words != null)
@@ -205,46 +209,56 @@ namespace WordSequence
                 if (wordItem.Words == null || !wordItem.Words.Override)
                     wordList.AddRange(globalConfiguration.DefaultWords);
 
-                targetWord = wordList[(int)cryptoRandom.GetRandomInRange(0, (ulong)wordList.Count-1)];
+                if (wordList.Count > 0)
+                {
+                    targetWord = wordList[(int)cryptoRandom.GetRandomInRange(0, (ulong)wordList.Count-1)];
+                }
             }
 
-            if (wordItem.Substitution > PercentEnum.Never)
+            /* somehow count is 1 sometimes when the word coming back is empty...not
+             * sure what's going on there, but guard against it here rather than
+             * just returning early above.
+             */
+            if (targetWord != string.Empty)
             {
-                List<BaseSubstitution> applicableSubstitution = new List<BaseSubstitution>();
-                if (wordItem.Substitutions != null)
+                if (wordItem.Substitution > PercentEnum.Never)
                 {
-                    applicableSubstitution.AddRange(wordItem.Substitutions);
-                }
-                if (wordItem.Substitutions == null || !wordItem.Substitutions.Override)
-                {
-                    applicableSubstitution.AddRange(globalConfiguration.DefaultSubstitutions);
-                }
-                foreach (BaseSubstitution substitution in applicableSubstitution)
-                {
-                    if ((int)cryptoRandom.GetRandomInRange(1, 100) <= (int)wordItem.Substitution)
+                    List<BaseSubstitution> applicableSubstitution = new List<BaseSubstitution>();
+                    if (wordItem.Substitutions != null)
                     {
-                        targetWord = ApplySubstitutionItem(substitution, targetWord);
+                        applicableSubstitution.AddRange(wordItem.Substitutions);
+                    }
+                    if (wordItem.Substitutions == null || !wordItem.Substitutions.Override)
+                    {
+                        applicableSubstitution.AddRange(globalConfiguration.DefaultSubstitutions);
+                    }
+                    foreach (BaseSubstitution substitution in applicableSubstitution)
+                    {
+                        if ((int)cryptoRandom.GetRandomInRange(1, 100) <= (int)wordItem.Substitution)
+                        {
+                            targetWord = ApplySubstitutionItem(substitution, targetWord);
+                        }
                     }
                 }
-            }
 
-            if (wordItem.Capitalize == CapitalizeEnum.Proper)
-            {
-                targetWord = targetWord[0].ToString().ToUpper() + targetWord.Substring(1);
-            }
-            else if (wordItem.Capitalize != CapitalizeEnum.Never)
-            {
-                string capitalizedWord = string.Empty;
-                foreach (char c in targetWord)
-                    if ((int)cryptoRandom.GetRandomInRange(1, 100) <= (int)wordItem.Capitalize)
-                        capitalizedWord += c.ToString().ToUpper();
-                    else
-                        capitalizedWord += c.ToString().ToLower();
-                targetWord = capitalizedWord;
-            }
-            else
-            {
-                targetWord = targetWord.ToLower();
+                if (wordItem.Capitalize == CapitalizeEnum.Proper)
+                {
+                    targetWord = targetWord[0].ToString().ToUpper() + targetWord.Substring(1);
+                }
+                else if (wordItem.Capitalize != CapitalizeEnum.Never)
+                {
+                    string capitalizedWord = string.Empty;
+                    foreach (char c in targetWord)
+                        if ((int)cryptoRandom.GetRandomInRange(1, 100) <= (int)wordItem.Capitalize)
+                            capitalizedWord += c.ToString().ToUpper();
+                        else
+                            capitalizedWord += c.ToString().ToLower();
+                    targetWord = capitalizedWord;
+                }
+                else
+                {
+                    targetWord = targetWord.ToLower();
+                }
             }
             return targetWord;
         }

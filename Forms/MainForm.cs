@@ -78,12 +78,22 @@ namespace Sequencer.Forms
         {
             Configuration.DefaultSubstitutions.Clear();
             Configuration.DefaultSubstitutions.AddRange(substitutionList1.Substitutions);
+            LoadConfigurationDetails();
         }
 
 
         private void LoadConfigurationDetails()
         {
-            txtWordList.Text = Configuration.DefaultWords.ToString();
+            string wordtext = Configuration.DefaultWords.ToString();
+            if (txtWordList.Text != null && txtWordList.Text != wordtext && txtWordList.Text != wordtext + " ")
+            {
+                /* only set the text when it has changed, because this is called
+                 * after updating the word list, and we don't want to mess with
+                 * cursor position, especially after typing a space character
+                 * which won't add anything to the word list!
+                 */
+                txtWordList.Text = wordtext;
+            }
             txtCharacterList.Text = Configuration.DefaultCharacters.ToString();
             substitutionList1.Substitutions = Configuration.DefaultSubstitutions;
             substitutionList1.DataBind();
@@ -400,13 +410,30 @@ namespace Sequencer.Forms
             CharacterList charList = new CharacterList();
             charList.AddRange(txtCharacterList.Text.ToArray());
             Configuration.DefaultCharacters = charList;
+            LoadConfigurationDetails();
         }
 
         private void txtWordList_TextChanged(object sender, EventArgs e)
         {
+            int oldWordCount = Configuration.DefaultWords.Count;
+
             WordList wordList = new WordList();
-            wordList.AddRange(txtWordList.Text.Split(' '));
+            wordList.AddRange(txtWordList.Text.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
             Configuration.DefaultWords = wordList;
+
+            int newWordCount = Configuration.DefaultWords.Count;
+            int baseWordCount = txtWordList.Text.Split(" ".ToCharArray()).Count();
+
+            /* keeps the entropy estimation accurate, plus the word list in
+             * samples/preview will be accurate for *most* changes, without
+             * updating for every single character typed because that would be
+             * annoying
+             */
+            if (oldWordCount != newWordCount || /* number of words changed */
+                newWordCount != baseWordCount) /* space added at end */
+            {
+                LoadConfigurationDetails();
+            }
         }
 
         private void substitutionList1_SelectedIndexChanged(object sender, EventArgs e)
