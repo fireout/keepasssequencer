@@ -10,6 +10,24 @@ namespace Sequencer.Configuration
         {
             Capitalize = CapitalizeEnum.Proper;
             Substitution = PercentEnum.Always;
+            Words = new OverridingWordList();
+        }
+
+        public override double entropy(PasswordSequenceConfiguration config)
+        {
+            double entropyVal = 0;
+
+            if (Words.Count > 0)
+            {
+                entropyVal += Math.Log(Words.Count, 2);
+            }
+            if (config.DefaultWords.Count > 0 && !Words.Override)
+            {
+                entropyVal += Math.Log(config.DefaultWords.Count, 2);
+            }
+            /* TODO: other properties */
+
+            return entropyVal;
         }
 
         public OverridingWordList Words { get; set; }
@@ -39,6 +57,5 @@ namespace Sequencer.Configuration
             get { return Substitution.ToString().ToLower(); }
             set { Substitution = (PercentEnum)Enum.Parse(typeof(PercentEnum), value, true); }
         }
-
     }
 }

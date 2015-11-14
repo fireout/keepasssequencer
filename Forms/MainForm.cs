@@ -46,6 +46,10 @@ namespace Sequencer.Forms
         private ToolStripButton tsbDeleteSubstitution;
         private ColumnHeader columnHeader1;
         private ColumnHeader columnHeader3;
+        private ColumnHeader columnHeader2;
+        private ColumnHeader columnHeader4;
+        private Label passwordPreview;
+        private ProgressBar strengthBar;
         private SubstitutionListControl substitutionList1;
 
         public MainForm()
@@ -99,27 +103,31 @@ namespace Sequencer.Forms
 
             WordSequence.Sequencer sequencer = new WordSequence.Sequencer();
 
+            double entropy = 0;
+
             foreach (SequenceItem sequenceItem in Configuration.Sequence)
             {
+                entropy += sequenceItem.entropy(Configuration);
+
                 ListViewItem listItem = new ListViewItem();
 
                 listItem.Tag = sequenceItem;
 
-                string itemText = "";
-
-                string sampleString = sequencer.GenerateSequenceItem(sequenceItem, Configuration, randomizer);
-
-                for (int i=1; i<5; i+=1)
+                for (int i=1; i<=3; i+=1)
                 {
-                    sampleString += " " + sequencer.GenerateSequenceItem(sequenceItem, Configuration, randomizer);
+                    listItem.SubItems.Add(string.Format(
+                                sequencer.GenerateSequenceItem(sequenceItem,
+                                                               Configuration,
+                                                               randomizer)));
                 }
-                listItem.SubItems.Add(string.Format(sampleString));
                 /* TODO: substitutions aren't applying at this point...why? 
                  * Answer: I think it's because modifying substitution list
                  * doesn't save the config! Should save config after editing
                  * those fields, and refresh this list, I guess.
                  * Need to check if all word lists are applied, too.
                  */
+
+                string itemText = "";
 
                 if (sequenceItem is CharacterSequenceItem)
                 {
@@ -148,6 +156,8 @@ namespace Sequencer.Forms
                 }
                 lvSequence.Items.Add(listItem);
             }
+            passwordPreview.Text = string.Format(sequencer.GenerateSequence(Configuration, randomizer));
+            strengthBar.Value = Math.Min((int)entropy, strengthBar.Maximum);
             UpdateToolstipButtons();
             UpdateSubstitutionToolbar();
         }
@@ -235,13 +245,13 @@ namespace Sequencer.Forms
                 string wordList;
                 if (TryGetUserInput("Enter the word list", "/w+", out wordList, wordItem.Words != null ? string.Join(" ", wordItem.Words.ToArray()) : ""))
                 {
-                    if (wordList == string.Empty)
-                        wordItem.Words = null;
-                    else
+                    if (wordItem.Words == null)
                     {
-                        if (wordItem.Words == null)
-                            wordItem.Words = new OverridingWordList();
-                        wordItem.Words.Clear();
+                        wordItem.Words = new OverridingWordList();
+                    }
+                    wordItem.Words.Clear();
+                    if (wordList != string.Empty)
+                    {
                         wordItem.Words.AddRange(wordList.Split(' '));
                     }
                 }
@@ -254,13 +264,13 @@ namespace Sequencer.Forms
                 string charList;
                 if (TryGetUserInput("Enter the char list", ".+", out charList, charItem.Characters != null ? string.Join(" ", charItem.Characters.Select(c => c.ToString()).ToArray()) : ""))
                 {
-                    if (charList == string.Empty)
-                        charItem.Characters = null;
-                    else
+                    if (charItem.Characters == null)
                     {
-                        if (charItem.Characters == null)
-                            charItem.Characters = new OverridingCharacterList();
-                        charItem.Characters.Clear();
+                        charItem.Characters = new OverridingCharacterList();
+                    }
+                    charItem.Characters.Clear();
+                    if (charList != string.Empty)
+                    {
                         charItem.Characters.AddRange(charList.ToArray());
                     }
                 }
@@ -274,7 +284,7 @@ namespace Sequencer.Forms
         {
             TItem item = GetSelectedSequenceItem<TItem>();
             string userValue;
-            if (item != null && TryGetUserInput(dialogPrompt, regex, out userValue, sequenceItemPropFunc.Compile()(item).ToString()))
+            if (item != null && TryGetUserInput(dialogPrompt, regex, out userValue, sequenceItemPropFunc.Compile()(item).ToString()) && userValue != "")
             {
                 TEnum value;
                 PropertyInfo[] propertyInfo = PropertyHelper<TItem>.GetProperties(sequenceItemPropFunc);
@@ -411,7 +421,10 @@ namespace Sequencer.Forms
 
         private void InitializeComponent()
         {
+            System.Windows.Forms.Label label4;
+            System.Windows.Forms.Label label5;
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.substitutionList1 = new Sequencer.Forms.SubstitutionListControl();
             this.label3 = new System.Windows.Forms.Label();
             this.txtCharacterList = new System.Windows.Forms.TextBox();
             this.txtWordList = new System.Windows.Forms.TextBox();
@@ -420,9 +433,13 @@ namespace Sequencer.Forms
             this.tsbDeleteSubstitution = new System.Windows.Forms.ToolStripButton();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.strengthBar = new System.Windows.Forms.ProgressBar();
+            this.passwordPreview = new System.Windows.Forms.Label();
             this.lvSequence = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripDropDownButton();
@@ -441,7 +458,8 @@ namespace Sequencer.Forms
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbUp = new System.Windows.Forms.ToolStripButton();
             this.tsbDown = new System.Windows.Forms.ToolStripButton();
-            this.substitutionList1 = new Sequencer.Forms.SubstitutionListControl();
+            label4 = new System.Windows.Forms.Label();
+            label5 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -449,6 +467,26 @@ namespace Sequencer.Forms
             this.toolStrip2.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label4.Location = new System.Drawing.Point(12, 263);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(67, 20);
+            label4.TabIndex = 2;
+            label4.Text = "Preview:";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            label5.Location = new System.Drawing.Point(12, 291);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(75, 20);
+            label5.TabIndex = 5;
+            label5.Text = "Strength:";
             // 
             // splitContainer1
             // 
@@ -469,11 +507,28 @@ namespace Sequencer.Forms
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(label5);
+            this.splitContainer1.Panel2.Controls.Add(this.strengthBar);
+            this.splitContainer1.Panel2.Controls.Add(this.passwordPreview);
+            this.splitContainer1.Panel2.Controls.Add(label4);
             this.splitContainer1.Panel2.Controls.Add(this.lvSequence);
             this.splitContainer1.Panel2.Controls.Add(this.toolStrip1);
-            this.splitContainer1.Size = new System.Drawing.Size(997, 545);
-            this.splitContainer1.SplitterDistance = 266;
+            this.splitContainer1.Size = new System.Drawing.Size(784, 644);
+            this.splitContainer1.SplitterDistance = 320;
             this.splitContainer1.TabIndex = 0;
+            // 
+            // substitutionList1
+            // 
+            this.substitutionList1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.substitutionList1.Location = new System.Drawing.Point(13, 163);
+            this.substitutionList1.Name = "substitutionList1";
+            this.substitutionList1.Size = new System.Drawing.Size(760, 154);
+            this.substitutionList1.Substitutions = null;
+            this.substitutionList1.TabIndex = 5;
+            this.substitutionList1.SelectedIndexChanged += new System.EventHandler(this.substitutionList1_SelectedIndexChanged);
+            this.substitutionList1.SubstitutionChanged += new System.EventHandler(this.substitutionList1_SubstitutionChanged);
             // 
             // label3
             // 
@@ -491,7 +546,7 @@ namespace Sequencer.Forms
             this.txtCharacterList.Location = new System.Drawing.Point(12, 100);
             this.txtCharacterList.Multiline = true;
             this.txtCharacterList.Name = "txtCharacterList";
-            this.txtCharacterList.Size = new System.Drawing.Size(973, 44);
+            this.txtCharacterList.Size = new System.Drawing.Size(760, 44);
             this.txtCharacterList.TabIndex = 3;
             this.txtCharacterList.TextChanged += new System.EventHandler(this.txtCharacterList_TextChanged);
             // 
@@ -503,7 +558,7 @@ namespace Sequencer.Forms
             this.txtWordList.Multiline = true;
             this.txtWordList.Name = "txtWordList";
             this.txtWordList.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtWordList.Size = new System.Drawing.Size(972, 51);
+            this.txtWordList.Size = new System.Drawing.Size(759, 51);
             this.txtWordList.TabIndex = 1;
             this.txtWordList.TextChanged += new System.EventHandler(this.txtWordList_TextChanged);
             // 
@@ -557,17 +612,39 @@ namespace Sequencer.Forms
             this.label1.TabIndex = 0;
             this.label1.Text = "Words";
             // 
+            // strengthBar
+            // 
+            this.strengthBar.Location = new System.Drawing.Point(109, 291);
+            this.strengthBar.MarqueeAnimationSpeed = 500;
+            this.strengthBar.Maximum = 128;
+            this.strengthBar.Name = "strengthBar";
+            this.strengthBar.Size = new System.Drawing.Size(417, 23);
+            this.strengthBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.strengthBar.TabIndex = 4;
+            this.strengthBar.Value = 46;
+            // 
+            // passwordPreview
+            // 
+            this.passwordPreview.AutoSize = true;
+            this.passwordPreview.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.passwordPreview.Location = new System.Drawing.Point(106, 266);
+            this.passwordPreview.Name = "passwordPreview";
+            this.passwordPreview.Size = new System.Drawing.Size(255, 16);
+            this.passwordPreview.TabIndex = 3;
+            this.passwordPreview.Text = "Password Preview Goes Here At Runtime";
+            // 
             // lvSequence
             // 
             this.lvSequence.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
-            this.columnHeader3});
-            this.lvSequence.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.columnHeader2,
+            this.columnHeader3,
+            this.columnHeader4});
             this.lvSequence.FullRowSelect = true;
             this.lvSequence.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.lvSequence.Location = new System.Drawing.Point(0, 25);
+            this.lvSequence.Location = new System.Drawing.Point(12, 28);
             this.lvSequence.Name = "lvSequence";
-            this.lvSequence.Size = new System.Drawing.Size(997, 250);
+            this.lvSequence.Size = new System.Drawing.Size(760, 232);
             this.lvSequence.TabIndex = 1;
             this.lvSequence.UseCompatibleStateImageBehavior = false;
             this.lvSequence.View = System.Windows.Forms.View.Details;
@@ -576,13 +653,27 @@ namespace Sequencer.Forms
             // columnHeader1
             // 
             this.columnHeader1.Text = "Type";
-            this.columnHeader1.Width = 111;
+            this.columnHeader1.Width = 133;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.DisplayIndex = 2;
+            this.columnHeader2.Text = "Sample";
+            this.columnHeader2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.columnHeader2.Width = 136;
             // 
             // columnHeader3
             // 
+            this.columnHeader3.DisplayIndex = 1;
             this.columnHeader3.Text = "Sample";
             this.columnHeader3.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.columnHeader3.Width = 442;
+            this.columnHeader3.Width = 136;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Sample";
+            this.columnHeader4.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.columnHeader4.Width = 136;
             // 
             // toolStrip1
             // 
@@ -598,7 +689,7 @@ namespace Sequencer.Forms
             this.tsbDown});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(997, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(784, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -742,22 +833,9 @@ namespace Sequencer.Forms
             this.tsbDown.Text = "tsbDown";
             this.tsbDown.Click += new System.EventHandler(this.tsbDown_Click);
             // 
-            // substitutionList1
-            // 
-            this.substitutionList1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.substitutionList1.Location = new System.Drawing.Point(13, 163);
-            this.substitutionList1.Name = "substitutionList1";
-            this.substitutionList1.Size = new System.Drawing.Size(973, 100);
-            this.substitutionList1.Substitutions = null;
-            this.substitutionList1.TabIndex = 5;
-            this.substitutionList1.SelectedIndexChanged += new System.EventHandler(this.substitutionList1_SelectedIndexChanged);
-            this.substitutionList1.SubstitutionChanged += new System.EventHandler(this.substitutionList1_SubstitutionChanged);
-            // 
             // MainForm
             // 
-            this.ClientSize = new System.Drawing.Size(997, 545);
+            this.ClientSize = new System.Drawing.Size(784, 644);
             this.Controls.Add(this.splitContainer1);
             this.MaximizeBox = false;
             this.MinimizeBox = false;

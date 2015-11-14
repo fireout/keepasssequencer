@@ -16,6 +16,8 @@ namespace Sequencer.Configuration
         [XmlIgnore]
         public PercentEnum Probability { get; set; }
 
+        public abstract double entropy(PasswordSequenceConfiguration config);
+
         [XmlAttribute("probability")]
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
         public string XmlProbability
