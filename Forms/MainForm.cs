@@ -52,9 +52,20 @@ namespace Sequencer.Forms
         private ProgressBar strengthBar;
         private SubstitutionListControl substitutionList1;
 
+        private System.Timers.Timer wordlistUpdateTimer;
+        public delegate void LoadConfigDelegate(bool loadTextFields);
+        private void RefreshOnTimer(Object o, System.Timers.ElapsedEventArgs e)
+        {
+            this.Invoke(new LoadConfigDelegate(LoadConfigurationDetails), new object[] { false });
+        }
+
         public MainForm()
         {
             InitializeComponent();
+
+            wordlistUpdateTimer = new System.Timers.Timer(2500);
+            wordlistUpdateTimer.AutoReset = false;
+            wordlistUpdateTimer.Elapsed += this.RefreshOnTimer;
         }
 
         public PasswordSequenceConfiguration Configuration { get; set; }
@@ -65,7 +76,7 @@ namespace Sequencer.Forms
 
             Configuration = new WordSequence.Sequencer().Load();
 
-            LoadConfigurationDetails();
+            LoadConfigurationDetails(true);
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -82,19 +93,13 @@ namespace Sequencer.Forms
         }
 
 
-        private void LoadConfigurationDetails()
+        private void LoadConfigurationDetails(bool loadTextFields = false)
         {
-            string wordtext = Configuration.DefaultWords.ToString();
-            if (txtWordList.Text != null && txtWordList.Text != wordtext && txtWordList.Text != wordtext + " ")
+            if (loadTextFields)
             {
-                /* only set the text when it has changed, because this is called
-                 * after updating the word list, and we don't want to mess with
-                 * cursor position, especially after typing a space character
-                 * which won't add anything to the word list!
-                 */
-                txtWordList.Text = wordtext;
+                txtWordList.Text = Configuration.DefaultWords.ToString();
+                txtCharacterList.Text = Configuration.DefaultCharacters.ToString();
             }
-            txtCharacterList.Text = Configuration.DefaultCharacters.ToString();
             substitutionList1.Substitutions = Configuration.DefaultSubstitutions;
             substitutionList1.DataBind();
 
@@ -127,15 +132,9 @@ namespace Sequencer.Forms
                 {
                     listItem.SubItems.Add(string.Format(
                                 sequencer.GenerateSequenceItem(sequenceItem,
-                                                               Configuration,
-                                                               randomizer)));
+                                    Configuration,
+                                    randomizer)));
                 }
-                /* TODO: substitutions aren't applying at this point...why? 
-                 * Answer: I think it's because modifying substitution list
-                 * doesn't save the config! Should save config after editing
-                 * those fields, and refresh this list, I guess.
-                 * Need to check if all word lists are applied, too.
-                 */
 
                 string itemText = "";
 
@@ -410,30 +409,19 @@ namespace Sequencer.Forms
             CharacterList charList = new CharacterList();
             charList.AddRange(txtCharacterList.Text.ToArray());
             Configuration.DefaultCharacters = charList;
-            LoadConfigurationDetails();
+
+            wordlistUpdateTimer.Stop();
+            wordlistUpdateTimer.Start();
         }
 
         private void txtWordList_TextChanged(object sender, EventArgs e)
         {
-            int oldWordCount = Configuration.DefaultWords.Count;
-
             WordList wordList = new WordList();
             wordList.AddRange(txtWordList.Text.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
             Configuration.DefaultWords = wordList;
 
-            int newWordCount = Configuration.DefaultWords.Count;
-            int baseWordCount = txtWordList.Text.Split(" ".ToCharArray()).Count();
-
-            /* keeps the entropy estimation accurate, plus the word list in
-             * samples/preview will be accurate for *most* changes, without
-             * updating for every single character typed because that would be
-             * annoying
-             */
-            if (oldWordCount != newWordCount || /* number of words changed */
-                newWordCount != baseWordCount) /* space added at end */
-            {
-                LoadConfigurationDetails();
-            }
+            wordlistUpdateTimer.Stop();
+            wordlistUpdateTimer.Start();
         }
 
         private void substitutionList1_SelectedIndexChanged(object sender, EventArgs e)
