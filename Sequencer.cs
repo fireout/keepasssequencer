@@ -12,7 +12,7 @@ using KeePassLib.Security;
 using Sequencer.Configuration;
 using Sequencer.Forms;
 
-namespace WordSequence
+namespace Sequencer
 {
     public class Sequencer : CustomPwGenerator
     {
@@ -37,25 +37,27 @@ namespace WordSequence
              *  http://stackoverflow.com/a/2272628/1390430
              */
             var appConfig = System.Configuration.ConfigurationManager.OpenExeConfiguration(this.GetType().Assembly.Location);
-            string config = appConfig.AppSettings.Settings["userConfigPath"].Value;
+            string config = null;
+            if (appConfig.AppSettings.Settings["userConfigPath"] != null)
+                config = appConfig.AppSettings.Settings["userConfigPath"].Value;
 
             if (null != config)
             {
-              if (!System.IO.Path.IsPathRooted(config))
-              {
-                config = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    config);
-              }
+                if (!System.IO.Path.IsPathRooted(config))
+                {
+                    config = Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                        config);
+                }
             }
 
             if (null == config || !(getPathForWrite || File.Exists(config)))
             {
-              config = appConfig.AppSettings.Settings["defaultConfigPath"].Value;
-              if (null == config)
-              {
-                config = appConfig.AppSettings.Settings["configPath"].Value;
-              }
+                config = appConfig.AppSettings.Settings["defaultConfigPath"].Value;
+                if (null == config)
+                {
+                    config = appConfig.AppSettings.Settings["configPath"].Value;
+                }
             }
 
             if (null != config && (getPathForWrite || File.Exists(config)))
@@ -67,6 +69,10 @@ namespace WordSequence
                 return null; /* TODO: better to throw exception? */
             }
         }
+
+        private System.Configuration.Configuration Configuration { get {
+        return _configuration ?? (_configuration = System.Configuration.ConfigurationManager.OpenExeConfiguration(this.GetType().Assembly.Location));
+    }}
 
         public PasswordSequenceConfiguration Load()
         {
@@ -148,9 +154,9 @@ namespace WordSequence
             return targetSequence;
         }
 
-        public string GenerateSequenceItem(SequenceItem                  sequenceItem,
+        public string GenerateSequenceItem(SequenceItem sequenceItem,
                                            PasswordSequenceConfiguration globalConfiguration,
-                                           CryptoRandomRange             cryptoRandom)
+                                           CryptoRandomRange cryptoRandom)
         {
             if (sequenceItem is CharacterSequenceItem)
                 return GenerateSequenceItem((CharacterSequenceItem)sequenceItem, globalConfiguration, cryptoRandom);
@@ -159,9 +165,9 @@ namespace WordSequence
             return null;
         }
 
-        public string GenerateSequenceItem(CharacterSequenceItem         characterItem,
+        public string GenerateSequenceItem(CharacterSequenceItem characterItem,
                                            PasswordSequenceConfiguration globalConfiguration,
-                                           CryptoRandomRange             cryptoRandom)
+                                           CryptoRandomRange cryptoRandom)
         {
             string targetCharacterSet = string.Empty;
             List<char> characterList = null;
@@ -169,7 +175,7 @@ namespace WordSequence
             if (characterItem.LengthStrength != StrengthEnum.Full &&
                 (int)cryptoRandom.GetRandomInRange(0, 100) < (int)characterItem.LengthStrength)
             {
-              length = (int)cryptoRandom.GetRandomInRange(0, characterItem.Length);
+                length = (int)cryptoRandom.GetRandomInRange(0, characterItem.Length);
             }
 
             while (targetCharacterSet.Length < length)
@@ -183,7 +189,7 @@ namespace WordSequence
                         characterList.AddRange(globalConfiguration.DefaultCharacters);
                 }
 
-                int charPos = (int)cryptoRandom.GetRandomInRange(0, (ulong)characterList.Count-1);
+                int charPos = (int)cryptoRandom.GetRandomInRange(0, (ulong)characterList.Count - 1);
                 targetCharacterSet += characterList[charPos];
                 if (!characterItem.AllowDuplicate)
                     characterList.RemoveAt(charPos);
@@ -192,9 +198,9 @@ namespace WordSequence
             return targetCharacterSet;
         }
 
-        public string GenerateSequenceItem(WordSequenceItem              wordItem,
+        public string GenerateSequenceItem(WordSequenceItem wordItem,
                                            PasswordSequenceConfiguration globalConfiguration,
-                                           CryptoRandomRange             cryptoRandom)
+                                           CryptoRandomRange cryptoRandom)
         {
             string targetWord;
             {
@@ -204,7 +210,7 @@ namespace WordSequence
                 if (wordItem.Words == null || !wordItem.Words.Override)
                     wordList.AddRange(globalConfiguration.DefaultWords);
 
-                targetWord = wordList[(int)cryptoRandom.GetRandomInRange(0, (ulong)wordList.Count-1)];
+                targetWord = wordList[(int)cryptoRandom.GetRandomInRange(0, (ulong)wordList.Count - 1)];
             }
 
             if (wordItem.Substitution > PercentEnum.Never)
