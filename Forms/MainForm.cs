@@ -56,7 +56,16 @@ namespace Sequencer.Forms
         public delegate void LoadConfigDelegate(bool loadTextFields);
         private void RefreshOnTimer(Object o, System.Timers.ElapsedEventArgs e)
         {
-            this.Invoke(new LoadConfigDelegate(LoadConfigurationDetails), new object[] { false });
+            try
+            {
+                this.Invoke(new LoadConfigDelegate(LoadConfigurationDetails), new object[] { false });
+            }
+            catch (InvalidOperationException)
+            {
+                /* this is usually because we closed the form before the timer
+                 * expired; if that's the case there is no reason to refresh.
+                 */
+            }
         }
 
         public MainForm()
