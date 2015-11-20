@@ -38,6 +38,7 @@ namespace Sequencer.Configuration
 
         [XmlIgnore]
         private CapitalizeEnum _myCapChance;
+        [XmlIgnore]
         public CapitalizeEnum Capitalize
         {
             get
@@ -65,6 +66,7 @@ namespace Sequencer.Configuration
 
         [XmlIgnore]
         private PercentEnum _mySubstPercent;
+        [XmlIgnore]
         public PercentEnum Substitution {
             get { return _mySubstPercent; }
             set

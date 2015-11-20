@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using KeePassLib;
@@ -74,6 +75,8 @@ namespace WordSequence
              * config when user config not found
              */
             string configFile = GetConfigurationPath(false);
+            PasswordSequenceConfiguration config;
+
             if (null != configFile && File.Exists(configFile))
             {
                 /* TODO: replace xsd path with local path instead of web path
@@ -85,7 +88,15 @@ namespace WordSequence
                 FileStream configStream = File.OpenRead(configFile);
                 try
                 {
-                    return (PasswordSequenceConfiguration)serializer.Deserialize(XmlReader.Create(configStream));
+                    config = (PasswordSequenceConfiguration)serializer.Deserialize(XmlReader.Create(configStream));
+                }
+                catch (InvalidOperationException)
+                {
+                    MessageBox.Show(
+                            "An error occurred reading the Word Sequencer configuration file at " + configFile + ". It may be corrupt. Fix or delete and try again.",
+                            "Error Reading Configuration", 
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    config = new PasswordSequenceConfiguration(true);
                 }
                 finally
                 {
@@ -95,9 +106,10 @@ namespace WordSequence
             else
             {
                 /* Config file not found; create empty config */
-                return new PasswordSequenceConfiguration(true);
+                config = new PasswordSequenceConfiguration(true);
                 /* TODO: pop up an error message or something? */
             }
+            return config;
         }
 
         public void Save(PasswordSequenceConfiguration configuration)
