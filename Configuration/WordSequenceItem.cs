@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Xml.Serialization;
 
@@ -17,15 +18,70 @@ namespace Sequencer.Configuration
         {
             double entropyVal = 0;
 
-            if (Words.Count > 0)
+
+            List<string> wordList = new List<string>();
+            if (Words != null)
+                wordList.AddRange(Words);
+            if (Words == null || !Words.Override)
+                wordList.AddRange(config.DefaultWords);
+
+            List<BaseSubstitution> applicableSubstitution = new List<BaseSubstitution>();
+            if (Substitution > PercentEnum.Never)
             {
-                entropyVal += Math.Log(Words.Count, 2);
+                if (Substitutions != null)
+                {
+                    applicableSubstitution.AddRange(Substitutions);
+                }
+                if (Substitutions == null || !Substitutions.Override)
+                {
+                    applicableSubstitution.AddRange(config.DefaultSubstitutions);
+                }
             }
-            if (config.DefaultWords.Count > 0 && !Words.Override)
+
+            if (wordList.Count > 0)
             {
-                entropyVal += Math.Log(config.DefaultWords.Count, 2);
+                entropyVal += Math.Log(wordList.Count, 2);
             }
-            /* TODO: other properties */
+
+            /* collect stats about the word list and how substitions apply */
+            double avg_word_len = 0;
+            int subst_hit_count = 0;
+            foreach (string word in wordList)
+            {
+                avg_word_len += word.Length;
+                foreach (BaseSubstitution substitution in applicableSubstitution)
+                {
+                    WordSequence.Sequencer.ApplySubstitutionItem(substitution, word, ref subst_hit_count);
+                }
+            }
+            avg_word_len /= wordList.Count;
+            double avg_subst_hits = (double)subst_hit_count / wordList.Count;
+            
+            /* apply information added by capitalization */
+            double cap_chance = 0;
+            if (Capitalize != CapitalizeEnum.Proper)
+            {
+                cap_chance = (double) Capitalize / 100.0;
+            }
+            if (cap_chance > 0.0 && cap_chance < 1.0)
+            {
+                entropyVal += avg_word_len * cap_chance * Math.Log(1/cap_chance, 2);
+                entropyVal += avg_word_len * (1-cap_chance) * Math.Log(1/(1-cap_chance), 2);
+            }
+
+            /* apply average information added by substitutions */
+            double subst_chance = (double)Substitution / 100.0;
+            subst_chance = (double) Substitution / 100.0;
+            if (subst_chance > 0.0 && subst_chance < 1.0)
+            {
+                entropyVal += avg_subst_hits * subst_chance * Math.Log(1/subst_chance, 2);
+                entropyVal += avg_subst_hits * (1-subst_chance) * Math.Log(1/(1-subst_chance), 2);
+            }
+
+            /* Chance of not including the word actually decreases entropy
+             * because there is a chance the attacker needs to try fewer words.
+             */
+            entropyVal = entropyVal * (double) Probability / 100;
 
             return entropyVal;
         }
