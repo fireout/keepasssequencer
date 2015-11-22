@@ -60,7 +60,7 @@ namespace Sequencer.Forms
         {
             base.OnLoad(e);
 
-            Configuration = new WordSequence.Sequencer().Load();
+            Configuration = new Sequencer().Load();
 
             LoadConfigurationDetails();
         }
@@ -68,7 +68,7 @@ namespace Sequencer.Forms
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
-            new WordSequence.Sequencer().Save(Configuration);
+            new Sequencer().Save(Configuration);
         }
 
         private void UpdateConfigurationSubstitutions()
@@ -414,7 +414,7 @@ namespace Sequencer.Forms
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbUp = new System.Windows.Forms.ToolStripButton();
             this.tsbDown = new System.Windows.Forms.ToolStripButton();
-            this.substitutionList1 = new Sequencer.Forms.SubstitutionListControl();
+            this.substitutionList1 = new SubstitutionListControl();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();

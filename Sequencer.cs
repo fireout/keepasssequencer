@@ -53,8 +53,9 @@ namespace Sequencer
 
             if (null == config || !(getPathForWrite || File.Exists(config)))
             {
-                config = appConfig.AppSettings.Settings["defaultConfigPath"].Value;
-                if (null == config)
+                if (appConfig.AppSettings.Settings["defaultConfigPath"] != null)
+                    config = appConfig.AppSettings.Settings["defaultConfigPath"].Value;
+                if (null == config && appConfig.AppSettings.Settings["configPath"] != null)
                 {
                     config = appConfig.AppSettings.Settings["configPath"].Value;
                 }
@@ -69,10 +70,6 @@ namespace Sequencer
                 return null; /* TODO: better to throw exception? */
             }
         }
-
-        private System.Configuration.Configuration Configuration { get {
-        return _configuration ?? (_configuration = System.Configuration.ConfigurationManager.OpenExeConfiguration(this.GetType().Assembly.Location));
-    }}
 
         public PasswordSequenceConfiguration Load()
         {

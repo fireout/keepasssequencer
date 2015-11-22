@@ -5,7 +5,7 @@ namespace Sequencer
     public class SequencerExt : Plugin
     {
         private IPluginHost m_host = null;
-        private WordSequence.Sequencer m_gen = null;
+        private Sequencer m_gen = null;
 
 
         public override bool Initialize(IPluginHost host)
@@ -14,7 +14,7 @@ namespace Sequencer
             if (host == null) return false;
             m_host = host;
 
-            m_gen = new WordSequence.Sequencer();
+            m_gen = new Sequencer();
             m_host.PwGeneratorPool.Add(m_gen);
 
             return true;
