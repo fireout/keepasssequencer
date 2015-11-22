@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using KeePassLib;
@@ -74,6 +75,8 @@ namespace WordSequence
              * config when user config not found
              */
             string configFile = GetConfigurationPath(false);
+            PasswordSequenceConfiguration config;
+
             if (null != configFile && File.Exists(configFile))
             {
                 /* TODO: replace xsd path with local path instead of web path
@@ -85,7 +88,15 @@ namespace WordSequence
                 FileStream configStream = File.OpenRead(configFile);
                 try
                 {
-                    return (PasswordSequenceConfiguration)serializer.Deserialize(XmlReader.Create(configStream));
+                    config = (PasswordSequenceConfiguration)serializer.Deserialize(XmlReader.Create(configStream));
+                }
+                catch (InvalidOperationException)
+                {
+                    MessageBox.Show(
+                            "An error occurred reading the Word Sequencer configuration file at " + configFile + ". It may be corrupt. Fix or delete and try again.",
+                            "Error Reading Configuration", 
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    config = new PasswordSequenceConfiguration(true);
                 }
                 finally
                 {
@@ -95,9 +106,10 @@ namespace WordSequence
             else
             {
                 /* Config file not found; create empty config */
-                return new PasswordSequenceConfiguration(true);
+                config = new PasswordSequenceConfiguration(true);
                 /* TODO: pop up an error message or something? */
             }
+            return config;
         }
 
         public void Save(PasswordSequenceConfiguration configuration)
@@ -139,7 +151,7 @@ namespace WordSequence
             foreach (SequenceItem sequenceItem in globalConfiguration.Sequence)
             {
                 if (sequenceItem.Probability != PercentEnum.Never &&
-                        (int)cryptoRandom.GetRandomInRange(0, 100) <= (int)sequenceItem.Probability)
+                    (int)cryptoRandom.GetRandomInRange(1, 100) <= (int)sequenceItem.Probability)
                 {
                     targetSequence += GenerateSequenceItem(sequenceItem, globalConfiguration, cryptoRandom);
                 }
@@ -165,16 +177,18 @@ namespace WordSequence
         {
             string targetCharacterSet = string.Empty;
             List<char> characterList = null;
-            int length = characterItem.Length;
-            if (characterItem.LengthStrength != StrengthEnum.Full &&
-                (int)cryptoRandom.GetRandomInRange(0, 100) < (int)characterItem.LengthStrength)
+            uint length = characterItem.Length;
+            if (length > 0 &&
+                characterItem.LengthStrength != StrengthEnum.Full &&
+                (int)cryptoRandom.GetRandomInRange(1, 100) <= (uint)characterItem.LengthStrength)
             {
-              length = (int)cryptoRandom.GetRandomInRange(0, characterItem.Length);
+              length = (uint)cryptoRandom.GetRandomInRange(0, characterItem.Length-1);
             }
 
-            while (targetCharacterSet.Length < length)
+            while (targetCharacterSet.Length < length &&
+                   (null == characterList || characterList.Count > 0))
             {
-                if (characterList == null || characterList.Count == 0)
+                if (characterList == null)
                 {
                     characterList = new List<char>();
                     if (characterItem.Characters != null)
@@ -183,10 +197,13 @@ namespace WordSequence
                         characterList.AddRange(globalConfiguration.DefaultCharacters);
                 }
 
-                int charPos = (int)cryptoRandom.GetRandomInRange(0, (ulong)characterList.Count-1);
-                targetCharacterSet += characterList[charPos];
-                if (!characterItem.AllowDuplicate)
-                    characterList.RemoveAt(charPos);
+                if (characterList.Count > 0)
+                {
+                    int charPos = (int)cryptoRandom.GetRandomInRange(0, (ulong)characterList.Count-1);
+                    targetCharacterSet += characterList[charPos];
+                    if (!characterItem.AllowDuplicate)
+                        characterList.RemoveAt(charPos);
+                }
             }
 
             return targetCharacterSet;
@@ -196,7 +213,7 @@ namespace WordSequence
                                            PasswordSequenceConfiguration globalConfiguration,
                                            CryptoRandomRange             cryptoRandom)
         {
-            string targetWord;
+            string targetWord = string.Empty;
             {
                 List<string> wordList = new List<string>();
                 if (wordItem.Words != null)
@@ -204,46 +221,56 @@ namespace WordSequence
                 if (wordItem.Words == null || !wordItem.Words.Override)
                     wordList.AddRange(globalConfiguration.DefaultWords);
 
-                targetWord = wordList[(int)cryptoRandom.GetRandomInRange(0, (ulong)wordList.Count-1)];
+                if (wordList.Count > 0)
+                {
+                    targetWord = wordList[(int)cryptoRandom.GetRandomInRange(0, (ulong)wordList.Count-1)];
+                }
             }
 
-            if (wordItem.Substitution > PercentEnum.Never)
+            /* somehow count is 1 sometimes when the word coming back is empty...not
+             * sure what's going on there, but guard against it here rather than
+             * just returning early above.
+             */
+            if (targetWord != string.Empty)
             {
-                List<BaseSubstitution> applicableSubstitution = new List<BaseSubstitution>();
-                if (wordItem.Substitutions != null)
+                if (wordItem.Substitution > PercentEnum.Never)
                 {
-                    applicableSubstitution.AddRange(wordItem.Substitutions);
-                }
-                if (wordItem.Substitutions == null || !wordItem.Substitutions.Override)
-                {
-                    applicableSubstitution.AddRange(globalConfiguration.DefaultSubstitutions);
-                }
-                foreach (BaseSubstitution substitution in applicableSubstitution)
-                {
-                    if ((int)cryptoRandom.GetRandomInRange(0, 100) <= (int)wordItem.Substitution)
+                    List<BaseSubstitution> applicableSubstitution = new List<BaseSubstitution>();
+                    if (wordItem.Substitutions != null)
                     {
-                        targetWord = ApplySubstitutionItem(substitution, targetWord);
+                        applicableSubstitution.AddRange(wordItem.Substitutions);
+                    }
+                    if (wordItem.Substitutions == null || !wordItem.Substitutions.Override)
+                    {
+                        applicableSubstitution.AddRange(globalConfiguration.DefaultSubstitutions);
+                    }
+                    foreach (BaseSubstitution substitution in applicableSubstitution)
+                    {
+                        if ((int)cryptoRandom.GetRandomInRange(1, 100) <= (int)wordItem.Substitution)
+                        {
+                            targetWord = ApplySubstitutionItem(substitution, targetWord);
+                        }
                     }
                 }
-            }
 
-            if (wordItem.Capitalize == CapitalizeEnum.Proper)
-            {
-                targetWord = targetWord[0].ToString().ToUpper() + targetWord.Substring(1);
-            }
-            else if (wordItem.Capitalize != CapitalizeEnum.Never)
-            {
-                string capitalizedWord = string.Empty;
-                foreach (char c in targetWord)
-                    if ((int)cryptoRandom.GetRandomInRange(0, 100) <= (int)wordItem.Capitalize)
-                        capitalizedWord += c.ToString().ToUpper();
-                    else
-                        capitalizedWord += c.ToString().ToLower();
-                targetWord = capitalizedWord;
-            }
-            else
-            {
-                targetWord = targetWord.ToLower();
+                if (wordItem.Capitalize == CapitalizeEnum.Proper)
+                {
+                    targetWord = targetWord[0].ToString().ToUpper() + targetWord.Substring(1);
+                }
+                else if (wordItem.Capitalize != CapitalizeEnum.Never)
+                {
+                    string capitalizedWord = string.Empty;
+                    foreach (char c in targetWord)
+                        if ((int)cryptoRandom.GetRandomInRange(1, 100) <= (int)wordItem.Capitalize)
+                            capitalizedWord += c.ToString().ToUpper();
+                        else
+                            capitalizedWord += c.ToString().ToLower();
+                    targetWord = capitalizedWord;
+                }
+                else
+                {
+                    targetWord = targetWord.ToLower();
+                }
             }
             return targetWord;
         }

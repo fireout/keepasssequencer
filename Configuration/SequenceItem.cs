@@ -14,7 +14,21 @@ namespace Sequencer.Configuration
         }
 
         [XmlIgnore]
-        public PercentEnum Probability { get; set; }
+        private PercentEnum _myProb;
+        public PercentEnum Probability {
+            get { return _myProb; }
+            set
+            {
+                if (value > PercentEnum.Always)
+                    _myProb = PercentEnum.Always;
+                else if (value < PercentEnum.Never)
+                    _myProb = PercentEnum.Never;
+                else
+                    _myProb = value;
+            }
+        }
+
+        public abstract double entropy(PasswordSequenceConfiguration config);
 
         [XmlAttribute("probability")]
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]

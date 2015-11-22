@@ -10,6 +10,24 @@ namespace Sequencer.Configuration
         {
             Capitalize = CapitalizeEnum.Proper;
             Substitution = PercentEnum.Always;
+            Words = new OverridingWordList();
+        }
+
+        public override double entropy(PasswordSequenceConfiguration config)
+        {
+            double entropyVal = 0;
+
+            if (Words.Count > 0)
+            {
+                entropyVal += Math.Log(Words.Count, 2);
+            }
+            if (config.DefaultWords.Count > 0 && !Words.Override)
+            {
+                entropyVal += Math.Log(config.DefaultWords.Count, 2);
+            }
+            /* TODO: other properties */
+
+            return entropyVal;
         }
 
         public OverridingWordList Words { get; set; }
@@ -19,7 +37,24 @@ namespace Sequencer.Configuration
         public SubstitutionList Substitutions { get; set; }
 
         [XmlIgnore]
-        public CapitalizeEnum Capitalize { get; set; }
+        private CapitalizeEnum _myCapChance;
+        [XmlIgnore]
+        public CapitalizeEnum Capitalize
+        {
+            get
+            {
+                return _myCapChance;
+            }
+            set
+            {
+                if (value > CapitalizeEnum.Always && value != CapitalizeEnum.Proper)
+                    _myCapChance = CapitalizeEnum.Always;
+                else if (value < CapitalizeEnum.Never)
+                    _myCapChance = CapitalizeEnum.Never;
+                else
+                    _myCapChance = value;
+            }
+        }
 
         [XmlAttribute("capitalize")]
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
@@ -30,7 +65,20 @@ namespace Sequencer.Configuration
         }
 
         [XmlIgnore]
-        public PercentEnum Substitution { get; set; }
+        private PercentEnum _mySubstPercent;
+        [XmlIgnore]
+        public PercentEnum Substitution {
+            get { return _mySubstPercent; }
+            set
+            {
+                if (value > PercentEnum.Always)
+                    _mySubstPercent = PercentEnum.Always;
+                else if (value < PercentEnum.Never)
+                    _mySubstPercent = PercentEnum.Never;
+                else
+                    _mySubstPercent = value;
+            }
+        }
 
         [XmlAttribute("substitution")]
         [EditorBrowsable(EditorBrowsableState.Never), Browsable(false)]
@@ -39,6 +87,5 @@ namespace Sequencer.Configuration
             get { return Substitution.ToString().ToLower(); }
             set { Substitution = (PercentEnum)Enum.Parse(typeof(PercentEnum), value, true); }
         }
-
     }
 }
