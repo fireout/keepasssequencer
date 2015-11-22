@@ -1,3 +1,3 @@
 # keepasssequencer
 
-Initial code reside within the [IOC](https://github.com/fireout/keepasssequencer/tree/feature/IOC) branch.
+Initial code reside within the [feature/UI](https://github.com/fireout/keepasssequencer/tree/feature/UI) branch.
