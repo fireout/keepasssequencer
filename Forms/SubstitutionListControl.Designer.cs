@@ -1,4 +1,4 @@
-﻿namespace WordSequence.Forms
+﻿namespace Sequencer.Forms
 {
     partial class SubstitutionListControl
     {

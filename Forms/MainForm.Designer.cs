@@ -1,4 +1,4 @@
-﻿namespace WordSequence.Forms
+﻿namespace Sequencer.Forms
 {
     partial class MainForm
     {
@@ -192,7 +192,7 @@
             // tsbAddSequence
             // 
             this.tsbAddSequence.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbAddSequence.Image = global::WordSequence.Properties.Resources.icon_add;
+            this.tsbAddSequence.Image = global::Sequencer.Properties.Resources.icon_add;
             this.tsbAddSequence.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbAddSequence.Name = "tsbAddSequence";
             this.tsbAddSequence.Size = new System.Drawing.Size(23, 22);
@@ -201,7 +201,7 @@
             // tsbDeleteSequence
             // 
             this.tsbDeleteSequence.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbDeleteSequence.Image = global::WordSequence.Properties.Resources.delete_24;
+            this.tsbDeleteSequence.Image = global::Sequencer.Properties.Resources.delete_24;
             this.tsbDeleteSequence.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbDeleteSequence.Name = "tsbDeleteSequence";
             this.tsbDeleteSequence.Size = new System.Drawing.Size(23, 22);

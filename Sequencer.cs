@@ -13,7 +13,7 @@ using KeePassLib.Security;
 using Sequencer.Configuration;
 using Sequencer.Forms;
 
-namespace WordSequence
+namespace Sequencer
 {
     public class Sequencer : CustomPwGenerator
     {
@@ -38,25 +38,28 @@ namespace WordSequence
              *  http://stackoverflow.com/a/2272628/1390430
              */
             var appConfig = System.Configuration.ConfigurationManager.OpenExeConfiguration(this.GetType().Assembly.Location);
-            string config = appConfig.AppSettings.Settings["userConfigPath"].Value;
+            string config = null;
+            if (appConfig.AppSettings.Settings["userConfigPath"] != null)
+                config = appConfig.AppSettings.Settings["userConfigPath"].Value;
 
             if (null != config)
             {
-              if (!System.IO.Path.IsPathRooted(config))
-              {
-                config = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    config);
-              }
+                if (!System.IO.Path.IsPathRooted(config))
+                {
+                    config = Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                        config);
+                }
             }
 
             if (null == config || !(getPathForWrite || File.Exists(config)))
             {
-              config = appConfig.AppSettings.Settings["defaultConfigPath"].Value;
-              if (null == config)
-              {
-                config = appConfig.AppSettings.Settings["configPath"].Value;
-              }
+                if (appConfig.AppSettings.Settings["defaultConfigPath"] != null)
+                    config = appConfig.AppSettings.Settings["defaultConfigPath"].Value;
+                if (null == config && appConfig.AppSettings.Settings["configPath"] != null)
+                {
+                    config = appConfig.AppSettings.Settings["configPath"].Value;
+                }
             }
 
             if (null != config && (getPathForWrite || File.Exists(config)))
@@ -160,9 +163,9 @@ namespace WordSequence
             return targetSequence;
         }
 
-        public string GenerateSequenceItem(SequenceItem                  sequenceItem,
+        public string GenerateSequenceItem(SequenceItem sequenceItem,
                                            PasswordSequenceConfiguration globalConfiguration,
-                                           CryptoRandomRange             cryptoRandom)
+                                           CryptoRandomRange cryptoRandom)
         {
             if (sequenceItem is CharacterSequenceItem)
                 return GenerateSequenceItem((CharacterSequenceItem)sequenceItem, globalConfiguration, cryptoRandom);
@@ -171,9 +174,9 @@ namespace WordSequence
             return null;
         }
 
-        public string GenerateSequenceItem(CharacterSequenceItem         characterItem,
+        public string GenerateSequenceItem(CharacterSequenceItem characterItem,
                                            PasswordSequenceConfiguration globalConfiguration,
-                                           CryptoRandomRange             cryptoRandom)
+                                           CryptoRandomRange cryptoRandom)
         {
             string targetCharacterSet = string.Empty;
             List<char> characterList = null;
@@ -209,9 +212,9 @@ namespace WordSequence
             return targetCharacterSet;
         }
 
-        public string GenerateSequenceItem(WordSequenceItem              wordItem,
+        public string GenerateSequenceItem(WordSequenceItem wordItem,
                                            PasswordSequenceConfiguration globalConfiguration,
-                                           CryptoRandomRange             cryptoRandom)
+                                           CryptoRandomRange cryptoRandom)
         {
             string targetWord = string.Empty;
             {

@@ -83,7 +83,7 @@ namespace Sequencer.Forms
         {
             base.OnLoad(e);
 
-            Configuration = new WordSequence.Sequencer().Load();
+            Configuration = new Sequencer().Load();
 
             LoadConfigurationDetails(true);
         }
@@ -91,7 +91,7 @@ namespace Sequencer.Forms
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
-            new WordSequence.Sequencer().Save(Configuration);
+            new Sequencer().Save(Configuration);
         }
 
         private void UpdateConfigurationSubstitutions()
@@ -121,11 +121,10 @@ namespace Sequencer.Forms
              * additional entropy but for the sample we don't care.
              */
             byte[] pbKey = CryptoRandom.Instance.GetRandomBytes(256);
-            WordSequence.CryptoRandomRange randomizer =
-                new WordSequence.CryptoRandomRange(
+            CryptoRandomRange randomizer = new CryptoRandomRange(
                         new CryptoRandomStream(CrsAlgorithm.Salsa20, pbKey));
 
-            WordSequence.Sequencer sequencer = new WordSequence.Sequencer();
+            Sequencer sequencer = new Sequencer();
 
             double entropy = 0;
 
@@ -156,12 +155,12 @@ namespace Sequencer.Forms
                     itemText += "Word";
                 }
 
-                if (sequenceItem.Probability == Sequencer.Configuration.PercentEnum.Never)
+                if (sequenceItem.Probability == PercentEnum.Never)
                 {
                     listItem.Font = new Font(listItem.Font, listItem.Font.Style | FontStyle.Strikeout);
                     listItem.ForeColor = System.Drawing.Color.Gray;
                 }
-                else if (sequenceItem.Probability < Sequencer.Configuration.PercentEnum.Always)
+                else if (sequenceItem.Probability < PercentEnum.Always)
                 {
                     listItem.Font = new Font(listItem.Font, listItem.Font.Style | FontStyle.Italic);
                     itemText += " (" + sequenceItem.Probability.ToString() + "%)";
@@ -448,7 +447,7 @@ namespace Sequencer.Forms
             System.Windows.Forms.Label label4;
             System.Windows.Forms.Label label5;
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.substitutionList1 = new Sequencer.Forms.SubstitutionListControl();
+            this.substitutionList1 = new SubstitutionListControl();
             this.label3 = new System.Windows.Forms.Label();
             this.txtCharacterList = new System.Windows.Forms.TextBox();
             this.txtWordList = new System.Windows.Forms.TextBox();

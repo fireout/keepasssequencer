@@ -1,7 +1,7 @@
 using KeePassLib.Cryptography;
 using KeePassLib.Cryptography.PasswordGenerator;
 
-namespace WordSequence
+namespace Sequencer
 {
     /* This class exists to restrict the 64-bit random provided by the KeePass
      * library to a range, without bias. Probably this should be built into
