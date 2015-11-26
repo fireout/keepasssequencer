@@ -1,3 +1,4 @@
 # keepasssequencer
 
-Initial code reside within the [feature/UI](https://github.com/fireout/keepasssequencer/tree/feature/UI) branch.
+Most recent code reside within the [develop](https://github.com/fireout/keepasssequencer/tree/develop) branch.
+
