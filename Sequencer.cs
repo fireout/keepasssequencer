@@ -17,21 +17,29 @@ namespace Sequencer
 {
     public class Sequencer : CustomPwGenerator
     {
-        /* If getting a file name for writing, or a user config file is found,
-         * returns the path to the user config file.
-         *
-         * If getting a file name for reading, and the user config file is not
-         * found, returns the path to the global config.
-         *
-         * If user config file is not specified, return global config file.
-         *
-         * If neither config file is specified, returns null.
-         *
-         * Note reading the global config at startup and then writing the user
-         * config after changing settings, allows a default configuration to be
-         * copied from the global config to the user config on first use.
-         */
-        private string GetConfigurationPath(bool getPathForWrite)
+        /// <summary>
+        /// Get the current applicable configuration path 
+        /// </summary>
+        /// <param name="getPathForWrite">see remarks</param>
+        /// <param name="profileName">The keepass profile name, that we will be using to construct the filename from, if specified</param>
+        /// <remarks>
+        /// If getting a file name for writing, or a user config file is found,
+        /// returns the path to the user config file.  If a profileName is
+        /// specified, it will be concatenated to the configuration file path.
+        /// 
+        /// If getting a file name for reading, and the user config file is not
+        /// found, returns the path to the global config.
+        /// 
+        /// If user config file is not specified, return global config file.
+        /// 
+        /// If neither config file is specified, returns null.
+        /// 
+        /// Note reading the global config at startup and then writing the user
+        /// config after changing settings, allows a default configuration to be
+        /// copied from the global config to the user config on first use.
+        /// </remarks>
+        /// <returns>the absolute path of the configuration file</returns>
+        private string GetConfigurationPath(bool getPathForWrite, string profileName = null)
         {
             /* Getting config path from a mashup of:
              *  http://stackoverflow.com/a/5191101/1390430
@@ -44,6 +52,7 @@ namespace Sequencer
 
             if (null != config)
             {
+                config = InsertProfileNameInPath(config, profileName);
                 if (!System.IO.Path.IsPathRooted(config))
                 {
                     config = Path.Combine(
@@ -55,11 +64,14 @@ namespace Sequencer
             if (null == config || !(getPathForWrite || File.Exists(config)))
             {
                 if (appConfig.AppSettings.Settings["defaultConfigPath"] != null)
+                {
                     config = appConfig.AppSettings.Settings["defaultConfigPath"].Value;
+                }
                 if (null == config && appConfig.AppSettings.Settings["configPath"] != null)
                 {
                     config = appConfig.AppSettings.Settings["configPath"].Value;
                 }
+                config = InsertProfileNameInPath(config, profileName);
             }
 
             if (null != config && (getPathForWrite || File.Exists(config)))
@@ -72,12 +84,29 @@ namespace Sequencer
             }
         }
 
-        public PasswordSequenceConfiguration Load()
+        private string InsertProfileNameInPath(string path, string profileName)
+        {
+            string config = path;
+            if (!string.IsNullOrEmpty(profileName))
+            {
+                string extension = Path.GetExtension(config);
+                config = config.TrimEnd(extension.ToCharArray());
+                config = string.Format("{0}.{1}{2}", config, profileName, extension);
+            }
+            return config;
+        }
+
+        /// <summary>
+        /// Loads a PasswordSequenceConfiguration configuration 
+        /// </summary>
+        /// <param name="profileName">The keepass profile name, that we will be using to construct the filename from, if specified</param>
+        /// <returns></returns>
+        public PasswordSequenceConfiguration Load(string profileName = null)
         {
             /* pass "false" to GetConfigurationPath to default to the global
              * config when user config not found
              */
-            string configFile = GetConfigurationPath(false);
+            string configFile = GetConfigurationPath(false, profileName);
             PasswordSequenceConfiguration config;
 
             if (null != configFile && File.Exists(configFile))
@@ -92,12 +121,13 @@ namespace Sequencer
                 try
                 {
                     config = (PasswordSequenceConfiguration)serializer.Deserialize(XmlReader.Create(configStream));
+                    config.Name = profileName;
                 }
                 catch (InvalidOperationException)
                 {
                     MessageBox.Show(
                             "An error occurred reading the Word Sequencer configuration file at " + configFile + ". It may be corrupt. Fix or delete and try again.",
-                            "Error Reading Configuration", 
+                            "Error Reading Configuration",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
                     config = new PasswordSequenceConfiguration(true);
                 }
@@ -120,7 +150,7 @@ namespace Sequencer
             /* pass "true" to GetConfigurationPath to default to the user config
              * even when it doesn't exist yet; we'll create it here
              */
-            string configFile = GetConfigurationPath(true);
+            string configFile = GetConfigurationPath(true, configuration.Name);
             if (null != configFile)
             {
                 XmlSerializer serializer =
@@ -185,7 +215,7 @@ namespace Sequencer
                 characterItem.LengthStrength != StrengthEnum.Full &&
                 (int)cryptoRandom.GetRandomInRange(1, 100) <= (uint)characterItem.LengthStrength)
             {
-              length = (uint)cryptoRandom.GetRandomInRange(0, characterItem.Length-1);
+                length = (uint)cryptoRandom.GetRandomInRange(0, characterItem.Length - 1);
             }
 
             while (targetCharacterSet.Length < length &&
@@ -202,7 +232,7 @@ namespace Sequencer
 
                 if (characterList.Count > 0)
                 {
-                    int charPos = (int)cryptoRandom.GetRandomInRange(0, (ulong)characterList.Count-1);
+                    int charPos = (int)cryptoRandom.GetRandomInRange(0, (ulong)characterList.Count - 1);
                     targetCharacterSet += characterList[charPos];
                     if (!characterItem.AllowDuplicate)
                         characterList.RemoveAt(charPos);
@@ -226,7 +256,7 @@ namespace Sequencer
 
                 if (wordList.Count > 0)
                 {
-                    targetWord = wordList[(int)cryptoRandom.GetRandomInRange(0, (ulong)wordList.Count-1)];
+                    targetWord = wordList[(int)cryptoRandom.GetRandomInRange(0, (ulong)wordList.Count - 1)];
                 }
             }
 
@@ -326,21 +356,17 @@ namespace Sequencer
             return substitutedWord;
         }
 
-        private PasswordSequenceConfiguration _configuration;
-        protected PasswordSequenceConfiguration Configuration { get { return _configuration ?? (_configuration = Load()); } }
-
         public override ProtectedString Generate(PwProfile prf, CryptoRandomStream crsRandomSource)
         {
-            return new ProtectedString(true, GenerateSequence(Load(), new CryptoRandomRange(crsRandomSource)));
+            return new ProtectedString(true, GenerateSequence(Load(prf.CustomAlgorithmOptions), new CryptoRandomRange(crsRandomSource)));
         }
 
         public override string GetOptions(string strCurrentOptions)
         {
             MainForm form = new MainForm();
-            form.Configuration = Configuration;
+            form.Configuration = new Sequencer().Load(strCurrentOptions);
             form.ShowDialog();
-            _configuration = null;
-            return base.GetOptions(strCurrentOptions);
+            return form.Configuration.Name;
         }
 
 
