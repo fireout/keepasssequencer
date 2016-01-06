@@ -51,7 +51,7 @@ namespace Sequencer.Configuration
                 avg_word_len += word.Length;
                 foreach (BaseSubstitution substitution in applicableSubstitution)
                 {
-                    WordSequence.Sequencer.ApplySubstitutionItem(substitution, word, ref subst_hit_count);
+                    Sequencer.ApplySubstitutionItem(substitution, word, ref subst_hit_count);
                 }
             }
             avg_word_len /= wordList.Count;

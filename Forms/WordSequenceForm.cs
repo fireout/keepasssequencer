@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 using Sequencer.Configuration;
-using WordSequence;
 
 namespace Sequencer.Forms
 {

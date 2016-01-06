@@ -29,6 +29,8 @@ namespace Sequencer.Configuration
             Sequence = new List<SequenceItem>();
         }
 
+        public string Name { get; set; }
+
         [XmlNamespaceDeclarations]
         public XmlSerializerNamespaces XmlNamespace;
 
