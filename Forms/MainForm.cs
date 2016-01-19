@@ -327,7 +327,7 @@ namespace Sequencer.Forms
                 TEnum? value;
                 PropertyInfo[] propertyInfo = PropertyHelper<TItem>.GetProperties(sequenceItemPropFunc);
                 TypeConverter converter;
-                if (typeof(TEnum).IsEnum && (value = Enum.Parse(typeof(TEnum), userValue) as TEnum?) != null)
+                if (typeof(TEnum).IsEnum && TryParse(userValue, out value))
                 {
                     SetExpressionValue(item, propertyInfo, value);
                 }
@@ -335,6 +335,23 @@ namespace Sequencer.Forms
                     SetExpressionValue(item, propertyInfo, converter.ConvertFrom(userValue));
                 LoadConfigurationDetails();
             }
+        }
+
+        private bool TryParse<TEnum>(string value, out TEnum? result)
+            where TEnum : struct
+        {
+            result = null;
+            string[] enumValues = Enum.GetNames(typeof(TEnum));
+            foreach (string enumValue in enumValues)
+            {
+                if (string.Equals(value, enumValue, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    result = (TEnum)Enum.Parse(typeof(TEnum), enumValue, true);
+                    return true;
+                }
+            }
+            return false;
+
         }
 
         private static void SetExpressionValue<TItem, TEnum>(TItem item, PropertyInfo[] propertyInfo, TEnum value) where TItem : SequenceItem
