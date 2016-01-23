@@ -45,9 +45,18 @@ namespace Sequencer.Configuration
 
         public PasswordSequenceConfiguration LoadFromUserFile(string profileName = null)
         {
-            return LoadFromFile(GetUSerFilePath(profileName));
+            string userFilePath = GetUserFilePath(profileName);
+            if (userFilePath != null && File.Exists(userFilePath))
+                return LoadFromFile(userFilePath);
+
+            MessageBox.Show(
+                    "An error occurred reading the Word Sequencer configuration file at " + userFilePath + ". It may be corrupt. Fix or delete and try again.",
+                    "Error Reading Configuration",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return null;
         }
-        public string GetUSerFilePath(string profileName = null)
+
+        public string GetUserFilePath(string profileName = null)
         {
             string config = null;
             if (SequencerConfiguration.AppSettings.Settings["userConfigPath"] != null)
@@ -73,7 +82,7 @@ namespace Sequencer.Configuration
                 config = InsertProfileNameInPath(config, profileName);
             }
 
-            if (null != config && File.Exists(config))
+            if (null != config)
             {
                 return System.IO.Path.GetFullPath(config);
             }
@@ -109,41 +118,43 @@ namespace Sequencer.Configuration
 
         }
 
+        public ICollection<string> ListConfigurationFiles()
+        {
+            string path = GetUserFilePath();
+            return Directory.GetFiles(Path.GetDirectoryName(path), string.Format("{0}*{1}", Path.GetFileNameWithoutExtension(path), Path.GetExtension(path)));
+        }
+
         public PasswordSequenceConfiguration LoadFromFile(string path)
         {
             if (path == null || path == string.Empty)
                 throw new Exception("path must be a valid file path");
 
             PasswordSequenceConfiguration config = null;
-
-            if (File.Exists(path))
+            try
             {
-                FileStream configStream = File.OpenRead(path);
-                try
+                using (FileStream configStream = File.OpenRead(path))
                 {
-                    config = LoadFromStream(configStream);
-                }
-                catch (InvalidOperationException)
-                {
-                    MessageBox.Show(
-                            "An error occurred reading the Word Sequencer configuration file at " + path + ". It may be corrupt. Fix or delete and try again.",
-                            "Error Reading Configuration",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    config = new PasswordSequenceConfiguration(true);
-                }
-                finally
-                {
-                    configStream.Close();
+                    if (File.Exists(path))
+                    {
+                        config = LoadFromStream(configStream);
+                    }
+                    else
+                    {
+                        /* Config file not found; create empty config */
+                        config = new PasswordSequenceConfiguration(true);
+                        /* TODO: pop up an error message or something? */
+                    }
                 }
             }
-            else
+            catch (InvalidOperationException)
             {
-                /* Config file not found; create empty config */
+                MessageBox.Show(
+                        "An error occurred reading the Word Sequencer configuration file at " + path + ". It may be corrupt. Fix or delete and try again.",
+                        "Error Reading Configuration",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 config = new PasswordSequenceConfiguration(true);
-                /* TODO: pop up an error message or something? */
             }
             return config;
-
         }
 
         private PasswordSequenceConfiguration LoadFromStream(Stream stream)

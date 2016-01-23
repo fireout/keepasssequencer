@@ -489,7 +489,7 @@ namespace Sequencer.Forms
             this.lblClose = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.lnkTop5k = new System.Windows.Forms.LinkLabel();
-            this.substitutionList1 = new SubstitutionListControl();
+            this.substitutionList1 = new global::Sequencer.Forms.SubstitutionListControl();
             this.label3 = new System.Windows.Forms.Label();
             this.txtCharacterList = new System.Windows.Forms.TextBox();
             this.txtWordList = new System.Windows.Forms.TextBox();
@@ -1094,6 +1094,7 @@ namespace Sequencer.Forms
             this.Name = "MainForm";
             this.ShowIcon = false;
             this.Text = "Sequence Setup";
+            this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -1145,7 +1146,16 @@ namespace Sequencer.Forms
             string result;
             if (TryGetUserInput("Enter a configuration name, leave empty for default", @"\d*", out result, null))
             {
-                Configuration = new Sequencer().Load(result);
+                try
+                {
+                    Configuration = new Sequencer().Load(result);
+
+                }
+                catch (Exception)
+                {
+
+                    MessageBox.Show("Could not load configuration");
+                }
             }
             else
             {
@@ -1232,6 +1242,27 @@ namespace Sequencer.Forms
         {
             lnkTop5k.LinkVisited = true;
             System.Diagnostics.Process.Start("http://www.wordfrequency.info/");
+        }
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            loadToolStripMenuItem.DropDownItems.Clear();
+
+            foreach (string config in new PasswordSequenceConfigurationFactory().ListConfigurationFiles())
+            {
+
+                loadToolStripMenuItem.DropDownItems.Add(config).Click += LoadFoundTemplate;
+            }
+        }
+
+        void LoadFoundTemplate(object sender, EventArgs e)
+        {
+            ToolStripItem item = sender as ToolStripItem;
+            if (item != null)
+            {
+                Configuration = new PasswordSequenceConfigurationFactory().LoadFromFile(item.Text);
+                LoadConfigurationDetails(true);
+            }
         }
 
 

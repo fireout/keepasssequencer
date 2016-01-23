@@ -35,7 +35,7 @@ namespace Sequencer
              */
             PasswordSequenceConfigurationFactory factory = new PasswordSequenceConfigurationFactory();
 
-            string configFile = factory.GetUSerFilePath(configuration.Name);
+            string configFile = factory.GetUserFilePath(configuration.Name);
             if (null != configFile)
             {
                 XmlSerializer serializer =
