@@ -43,8 +43,11 @@ namespace Sequencer.Configuration
             }
         }
 
-
         public PasswordSequenceConfiguration LoadFromUserFile(string profileName = null)
+        {
+            return LoadFromFile(GetUSerFilePath(profileName));
+        }
+        public string GetUSerFilePath(string profileName = null)
         {
             string config = null;
             if (SequencerConfiguration.AppSettings.Settings["userConfigPath"] != null)
@@ -72,7 +75,7 @@ namespace Sequencer.Configuration
 
             if (null != config && File.Exists(config))
             {
-                return LoadFromFile(System.IO.Path.GetFullPath(config));
+                return System.IO.Path.GetFullPath(config);
             }
             else
             {

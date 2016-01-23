@@ -1191,30 +1191,34 @@ namespace Sequencer.Forms
             PasswordSequenceConfiguration tempConfiguration = new PasswordSequenceConfigurationFactory().LoadFromResource(stringResource);
             if (tempConfiguration != null)
             {
-                string insertedWords = tempConfiguration.DefaultWords.ToString();
-                txtWordList.SelectedText = insertedWords;
-                txtWordList_TextChanged(null, null);
+                AppendWordList(tempConfiguration.DefaultWords.ToString());
             }
+        }
+
+        private void AppendWordList(string wordList)
+        {
+            txtWordList.SelectedText = wordList;
+            txtWordList_TextChanged(null, null);
         }
 
         private void dicewareToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AppendWordListFromProfile(global::Sequencer.Properties.Resources.options_diceware);
+            AppendWordList(global::Sequencer.Properties.Resources.diceware);
         }
 
         private void bealeDicewareToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AppendWordListFromProfile(global::Sequencer.Properties.Resources.options_beale_diceware);
+            AppendWordList(global::Sequencer.Properties.Resources.bealeDiceware);
         }
 
         private void newGeneralServiceListToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AppendWordListFromProfile(global::Sequencer.Properties.Resources.options_ngsl);
+            AppendWordList(global::Sequencer.Properties.Resources.ngsl);
         }
 
         private void top5000ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AppendWordListFromProfile(global::Sequencer.Properties.Resources.options_top5k);
+            AppendWordList(global::Sequencer.Properties.Resources.top5k);
             if (!lnkTop5k.LinkVisited)
                 SponsorPanel.Visible = true;
         }

@@ -14,6 +14,7 @@ namespace Sequencer
             {
                 return updateUrl ?? (updateUrl = GetUpdateUrl());
             }
+        
         }
 
         private string GetUpdateUrl()

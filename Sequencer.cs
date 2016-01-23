@@ -24,12 +24,8 @@ namespace Sequencer
         /// <returns></returns>
         public PasswordSequenceConfiguration Load(string profileName = null)
         {
-            /* pass "false" to GetConfigurationPath to default to the global
-             * config when user config not found
-             */
-            string configFile = GetConfigurationPath(false, profileName);
-            return new PasswordSequenceConfigurationFactory().LoadFromFile(configFile);
-
+            PasswordSequenceConfigurationFactory factory = new PasswordSequenceConfigurationFactory();
+            return factory.LoadFromUserFile(profileName) ?? factory.LoadFromSystemFile(profileName);
         }
 
         public void Save(PasswordSequenceConfiguration configuration)
@@ -37,7 +33,9 @@ namespace Sequencer
             /* pass "true" to GetConfigurationPath to default to the user config
              * even when it doesn't exist yet; we'll create it here
              */
-            string configFile = GetConfigurationPath(true, configuration.Name);
+            PasswordSequenceConfigurationFactory factory = new PasswordSequenceConfigurationFactory();
+
+            string configFile = factory.GetUSerFilePath(configuration.Name);
             if (null != configFile)
             {
                 XmlSerializer serializer =
