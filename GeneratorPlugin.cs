@@ -7,6 +7,26 @@ namespace Sequencer
         private IPluginHost m_host = null;
         private Sequencer m_gen = null;
 
+        private string updateUrl = null;
+        public override string UpdateUrl
+        {
+            get
+            {
+                return updateUrl ?? (updateUrl = GetUpdateUrl());
+            }
+        }
+
+        private string GetUpdateUrl()
+        {
+            Configuration.PasswordSequenceConfigurationFactory factory = new Configuration.PasswordSequenceConfigurationFactory();
+            if (factory.SequencerConfiguration.AppSettings.Settings["version-file-url"] != null)
+            {
+                return factory.SequencerConfiguration.AppSettings.Settings["version-file-url"].Value;
+            }
+            return base.UpdateUrl;
+
+        }
+
 
         public override bool Initialize(IPluginHost host)
         {

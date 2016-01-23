@@ -1186,9 +1186,9 @@ namespace Sequencer.Forms
             txtCharacterList_TextChanged(null, null);
         }
 
-        private void AppendWordListFromProfile(string profile)
+        private void AppendWordListFromProfile(string stringResource)
         {
-            PasswordSequenceConfiguration tempConfiguration = new Sequencer().Load(profile);
+            PasswordSequenceConfiguration tempConfiguration = new PasswordSequenceConfigurationFactory().LoadFromResource(stringResource);
             if (tempConfiguration != null)
             {
                 string insertedWords = tempConfiguration.DefaultWords.ToString();
@@ -1199,22 +1199,22 @@ namespace Sequencer.Forms
 
         private void dicewareToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AppendWordListFromProfile("diceware");
+            AppendWordListFromProfile(global::Sequencer.Properties.Resources.options_diceware);
         }
 
         private void bealeDicewareToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AppendWordListFromProfile("beale-diceware");
+            AppendWordListFromProfile(global::Sequencer.Properties.Resources.options_beale_diceware);
         }
 
         private void newGeneralServiceListToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AppendWordListFromProfile("ngsl");
+            AppendWordListFromProfile(global::Sequencer.Properties.Resources.options_ngsl);
         }
 
         private void top5000ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AppendWordListFromProfile("top5k");
+            AppendWordListFromProfile(global::Sequencer.Properties.Resources.options_top5k);
             if (!lnkTop5k.LinkVisited)
                 SponsorPanel.Visible = true;
         }

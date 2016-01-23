@@ -61,6 +61,15 @@ namespace Sequencer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string bealeDiceware {
+            get {
+                return ResourceManager.GetString("bealeDiceware", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap delete_24 {
@@ -97,6 +106,51 @@ namespace Sequencer.Properties {
             get {
                 object obj = ResourceManager.GetObject("icon-add", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to a a&apos;s a-1 a-z aa aaa aaaa aaron ab aback abacus abase abash abate abbey abbot abbr abby abc abc&apos;s abcd abduct abdul abe abed abel abet abhor abide ablaze able abm abner aboard abode abort about above abram absent absorb abuse abut abyss ac ac/dc accept accuse ace aces ache ached aches achoo achy acid acidic acids acme acne acorn acquit acre acres acrid act acted actor acts acute ad ada adage adagio adair adam adams adapt add added adder addict addle adds adele adept adieu adios adjust adler admit ado adobe  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string options_beale_diceware {
+            get {
+                return ResourceManager.GetString("options_beale_diceware", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot;?&gt;
+        ///&lt;PasswordSequenceConfiguration xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns=&quot;http://quasivirtuel.com/PasswordSequenceConfiguration.xsd&quot;&gt;
+        ///  &lt;Name&gt;diceware&lt;/Name&gt;
+        ///  &lt;DefaultWords&gt;a a&amp;p a&apos;s aa aaa aaaa aaron ab aba ababa aback abase abash abate abbas abbe abbey abbot abbott abc abe abed abel abet abide abject ablaze able abner abo abode abort about above abrade abram absorb abuse abut abyss ac acadia accra accrue ace acetic ac [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string options_diceware {
+            get {
+                return ResourceManager.GetString("options_diceware", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot;?&gt;
+        ///&lt;PasswordSequenceConfiguration xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns=&quot;http://quasivirtuel.com/PasswordSequenceConfiguration.xsd&quot;&gt;
+        ///  &lt;Name&gt;The New General Service List&lt;/Name&gt;
+        ///  &lt;DefaultWords&gt;a abandon abandoned abandoning abandons abilities ability able abler ablest about above abroad absence absences absolutely abuse abused abuses abusing academic academics accept accepted accepting accepts access accessed accesses a [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string options_ngsl {
+            get {
+                return ResourceManager.GetString("options_ngsl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot;?&gt;
+        ///&lt;PasswordSequenceConfiguration xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns=&quot;http://quasivirtuel.com/PasswordSequenceConfiguration.xsd&quot;&gt;
+        ///  &lt;Name&gt;http://www.wordfrequency.info&lt;/Name&gt;
+        ///  &lt;DefaultWords&gt;a abandon ability able abortion about about above above abroad absence absolute absolutely absorb abstract abuse abuse academic accelerate accent accept acceptable acceptance access access accessible accident accommodate accompan [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string options_top5k {
+            get {
+                return ResourceManager.GetString("options_top5k", resourceCulture);
             }
         }
         

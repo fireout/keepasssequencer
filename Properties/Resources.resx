@@ -136,4 +136,16 @@
   <data name="up_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\up_32.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="options_beale_diceware" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\options.beale-diceware.xml;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="options_diceware" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\options.diceware.xml;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="options_ngsl" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\options.ngsl.xml;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="options_top5k" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\options.top5k.xml;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
 </root>

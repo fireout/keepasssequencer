@@ -18,85 +18,6 @@ namespace Sequencer
     public class Sequencer : CustomPwGenerator
     {
         /// <summary>
-        /// Get the current applicable configuration path 
-        /// </summary>
-        /// <param name="getPathForWrite">see remarks</param>
-        /// <param name="profileName">The keepass profile name, that we will be using to construct the filename from, if specified</param>
-        /// <remarks>
-        /// If getting a file name for writing, or a user config file is found,
-        /// returns the path to the user config file.  If a profileName is
-        /// specified, it will be concatenated to the configuration file path.
-        /// 
-        /// If getting a file name for reading, and the user config file is not
-        /// found, returns the path to the global config.
-        /// 
-        /// If user config file is not specified, return global config file.
-        /// 
-        /// If neither config file is specified, returns null.
-        /// 
-        /// Note reading the global config at startup and then writing the user
-        /// config after changing settings, allows a default configuration to be
-        /// copied from the global config to the user config on first use.
-        /// </remarks>
-        /// <returns>the absolute path of the configuration file</returns>
-        private string GetConfigurationPath(bool getPathForWrite, string profileName = null)
-        {
-            /* Getting config path from a mashup of:
-             *  http://stackoverflow.com/a/5191101/1390430
-             *  http://stackoverflow.com/a/2272628/1390430
-             */
-            var appConfig = System.Configuration.ConfigurationManager.OpenExeConfiguration(this.GetType().Assembly.Location);
-            string config = null;
-            if (appConfig.AppSettings.Settings["userConfigPath"] != null)
-                config = appConfig.AppSettings.Settings["userConfigPath"].Value;
-
-            if (null != config)
-            {
-                config = InsertProfileNameInPath(config, profileName);
-                if (!System.IO.Path.IsPathRooted(config))
-                {
-                    config = Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                        config);
-                }
-            }
-
-            if (null == config || !(getPathForWrite || File.Exists(config)))
-            {
-                if (appConfig.AppSettings.Settings["defaultConfigPath"] != null)
-                {
-                    config = appConfig.AppSettings.Settings["defaultConfigPath"].Value;
-                }
-                if (null == config && appConfig.AppSettings.Settings["configPath"] != null)
-                {
-                    config = appConfig.AppSettings.Settings["configPath"].Value;
-                }
-                config = InsertProfileNameInPath(config, profileName);
-            }
-
-            if (null != config && (getPathForWrite || File.Exists(config)))
-            {
-                return System.IO.Path.GetFullPath(config);
-            }
-            else
-            {
-                return null; /* TODO: better to throw exception? */
-            }
-        }
-
-        private string InsertProfileNameInPath(string path, string profileName)
-        {
-            string config = path;
-            if (!string.IsNullOrEmpty(profileName))
-            {
-                string extension = Path.GetExtension(config);
-                config = config.TrimEnd(extension.ToCharArray());
-                config = string.Format("{0}.{1}{2}", config, profileName, extension);
-            }
-            return config;
-        }
-
-        /// <summary>
         /// Loads a PasswordSequenceConfiguration configuration 
         /// </summary>
         /// <param name="profileName">The keepass profile name, that we will be using to construct the filename from, if specified</param>
@@ -107,42 +28,8 @@ namespace Sequencer
              * config when user config not found
              */
             string configFile = GetConfigurationPath(false, profileName);
-            PasswordSequenceConfiguration config;
+            return new PasswordSequenceConfigurationFactory().LoadFromFile(configFile);
 
-            if (null != configFile && File.Exists(configFile))
-            {
-                /* TODO: replace xsd path with local path instead of web path
-                 * that could change?
-                 */
-                XmlSerializer serializer =
-                    new XmlSerializer(typeof(PasswordSequenceConfiguration),
-                                      "http://quasivirtuel.com/PasswordSequenceConfiguration.xsd");
-                FileStream configStream = File.OpenRead(configFile);
-                try
-                {
-                    config = (PasswordSequenceConfiguration)serializer.Deserialize(XmlReader.Create(configStream));
-                    config.Name = profileName;
-                }
-                catch (InvalidOperationException)
-                {
-                    MessageBox.Show(
-                            "An error occurred reading the Word Sequencer configuration file at " + configFile + ". It may be corrupt. Fix or delete and try again.",
-                            "Error Reading Configuration",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    config = new PasswordSequenceConfiguration(true);
-                }
-                finally
-                {
-                    configStream.Close();
-                }
-            }
-            else
-            {
-                /* Config file not found; create empty config */
-                config = new PasswordSequenceConfiguration(true);
-                /* TODO: pop up an error message or something? */
-            }
-            return config;
         }
 
         public void Save(PasswordSequenceConfiguration configuration)
@@ -368,7 +255,6 @@ namespace Sequencer
             form.ShowDialog();
             return form.Configuration.Name;
         }
-
 
         public override bool SupportsOptions
         {
