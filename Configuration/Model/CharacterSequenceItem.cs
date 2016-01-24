@@ -9,7 +9,7 @@ namespace Sequencer.Configuration
     {
         public CharacterSequenceItem()
         {
-            Length = 1;
+            Length = 5;
             LengthStrength = StrengthEnum.Full;
             AllowDuplicate = true;
             Characters = new OverridingCharacterList();

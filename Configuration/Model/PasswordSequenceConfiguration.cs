@@ -16,17 +16,31 @@ namespace Sequencer.Configuration
 
             Sequence = new List<SequenceItem>();
         }
-        
+
         /* this constructor is for creating an empty configuration if reading
          * the config file fails somehow; the argument is unused but I don't
          * know a better way to do it
          */
-        public PasswordSequenceConfiguration(bool throwaway):this()
+        public PasswordSequenceConfiguration(bool throwaway)
+            : this()
         {
             DefaultWords = new WordList();
             DefaultCharacters = new CharacterList();
             DefaultSubstitutions = new List<BaseSubstitution>();
             Sequence = new List<SequenceItem>();
+            if (throwaway)
+            {
+                DefaultWords.AddRange(new[] { "Replace", "those", "words", "with", "your", "own", "selection" });
+                DefaultCharacters.AddRange("1234567890!\"$%?&*()_+");
+                DefaultSubstitutions.Add(new AnySubstitution()
+                {
+                    Replace = "bcdfghjklmnpqrstvwxz",
+                    With = "~",
+                    CaseSensitive = true
+                });
+                Sequence.Add(new WordSequenceItem());
+                Sequence.Add(new CharacterSequenceItem());
+            }
         }
 
         public string Name { get; set; }
