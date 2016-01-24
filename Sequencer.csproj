@@ -125,7 +125,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Sequencer.cs" />
-    <Compile Include="Configuration\Model\WordSequenceOption.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
