@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using Sequencer.Configuration;
+using Sequencer.Configuration.Model;
 
 namespace Sequencer.Forms
 {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using Sequencer.Configuration;
+using Sequencer.Configuration.Model;
 
 namespace Sequencer.Forms
 {

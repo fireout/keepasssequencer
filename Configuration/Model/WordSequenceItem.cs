@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Xml.Serialization;
 
-namespace Sequencer.Configuration
+namespace Sequencer.Configuration.Model
 {
     public class WordSequenceItem : SequenceItem
     {

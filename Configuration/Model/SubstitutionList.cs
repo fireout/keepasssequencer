@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Xml;
 
-namespace Sequencer.Configuration
+namespace Sequencer.Configuration.Model
 {
     public class SubstitutionList : OverridingCustomSerializationBaseList<BaseSubstitution>
     {

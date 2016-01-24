@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Xml.Serialization;
 
-namespace Sequencer.Configuration
+namespace Sequencer.Configuration.Model
 {
     [XmlRoot(ElementName = "Characters")]
     public class CharacterSequenceItem : SequenceItem

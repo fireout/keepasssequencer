@@ -49,10 +49,6 @@ namespace Sequencer.Configuration
             if (userFilePath != null && File.Exists(userFilePath))
                 return LoadFromFile(userFilePath);
 
-            MessageBox.Show(
-                    "An error occurred reading the Word Sequencer configuration file at " + userFilePath + ". It may be corrupt. Fix or delete and try again.",
-                    "Error Reading Configuration",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             return null;
         }
 
@@ -121,7 +117,9 @@ namespace Sequencer.Configuration
         public ICollection<string> ListConfigurationFiles()
         {
             string path = GetUserFilePath();
-            return Directory.GetFiles(Path.GetDirectoryName(path), string.Format("{0}*{1}", Path.GetFileNameWithoutExtension(path), Path.GetExtension(path)));
+            if (Directory.Exists(path))
+                return Directory.GetFiles(Path.GetDirectoryName(path), string.Format("{0}*{1}", Path.GetFileNameWithoutExtension(path), Path.GetExtension(path)));
+            return new List<string>();
         }
 
         public PasswordSequenceConfiguration LoadFromFile(string path)
@@ -148,11 +146,7 @@ namespace Sequencer.Configuration
             }
             catch (InvalidOperationException)
             {
-                MessageBox.Show(
-                        "An error occurred reading the Word Sequencer configuration file at " + path + ". It may be corrupt. Fix or delete and try again.",
-                        "Error Reading Configuration",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                config = new PasswordSequenceConfiguration(true);
+                config = null;
             }
             return config;
         }

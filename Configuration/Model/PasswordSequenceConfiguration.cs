@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Sequencer.Configuration.Model;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace Sequencer.Configuration

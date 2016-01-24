@@ -4,7 +4,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace Sequencer.Configuration
+namespace Sequencer.Configuration.Model
 {
     public abstract class CustomSerializationBaseList<T> : IList<T>, IXmlSerializable
     {

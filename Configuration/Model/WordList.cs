@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Sequencer.Configuration
+namespace Sequencer.Configuration.Model
 {
     [XmlRoot(ElementName = "Words")]
     public class WordList : CustomSerializationBaseList<string>
