@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace Sequencer.Configuration
+namespace Sequencer.Configuration.Model
 {
     public enum CapitalizeEnum : byte
     {

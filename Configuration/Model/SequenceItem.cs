@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Xml.Serialization;
 
-namespace Sequencer.Configuration
+namespace Sequencer.Configuration.Model
 {
     [XmlInclude(typeof(WordSequenceItem))]
     [XmlInclude(typeof(CharacterSequenceItem))]

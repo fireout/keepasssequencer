@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using Sequencer.Configuration;
+using Sequencer.Configuration.Model;
 using KeePassLib.Cryptography;
 
 namespace Sequencer.Forms
@@ -1150,7 +1151,17 @@ namespace Sequencer.Forms
             {
                 try
                 {
-                    Configuration = new PasswordSequenceConfigurationFactory().LoadFromUserFile(result);
+                    PasswordSequenceConfiguration config = new PasswordSequenceConfigurationFactory().LoadFromUserFile(result);
+                    if (config == null)
+                    {
+                        MessageBox.Show("An error occurred reading the Sequencer configuration file requested. " +
+                                         "It may be corrupt. Fix or delete and try again. " +
+                                         "A default configuration has been loaded.",
+                                         "Error Reading Configuration",
+                                         MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    }
+                    Configuration = config ?? new PasswordSequenceConfiguration(true);
 
                 }
                 catch (Exception)

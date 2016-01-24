@@ -12,6 +12,7 @@ using KeePassLib.Cryptography.PasswordGenerator;
 using KeePassLib.Security;
 using Sequencer.Configuration;
 using Sequencer.Forms;
+using Sequencer.Configuration.Model;
 
 namespace Sequencer
 {
@@ -65,6 +66,8 @@ namespace Sequencer
         public string GenerateSequence(PasswordSequenceConfiguration globalConfiguration,
                                        CryptoRandomRange cryptoRandom)
         {
+            if (globalConfiguration == null)
+                return string.Empty;
             string targetSequence = string.Empty;
             foreach (SequenceItem sequenceItem in globalConfiguration.Sequence)
             {
@@ -249,7 +252,18 @@ namespace Sequencer
         public override string GetOptions(string strCurrentOptions)
         {
             MainForm form = new MainForm();
-            form.Configuration = new Sequencer().Load(strCurrentOptions);
+            PasswordSequenceConfiguration configuration = new Sequencer().Load(strCurrentOptions);
+            if (configuration == null)
+            {
+                PasswordSequenceConfigurationFactory factory = new PasswordSequenceConfigurationFactory();
+                string userFilePath = factory.GetUserFilePath();
+                MessageBox.Show("An error occurred reading the Sequencer configuration file at " +
+                                 userFilePath + ". It may be corrupt. Fix or delete and try again. " +
+                                 "A default configuration has been loaded.",
+                                 "Error Reading Configuration",
+                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            form.Configuration = configuration ?? new PasswordSequenceConfiguration(true);
             form.ShowDialog();
             return form.Configuration.Name;
         }

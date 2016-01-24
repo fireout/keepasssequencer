@@ -1,4 +1,4 @@
-﻿namespace Sequencer.Configuration
+﻿namespace Sequencer.Configuration.Model
 {
     public class WholeSubstitution : BaseSubstitution
     {
