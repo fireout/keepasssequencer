@@ -151,6 +151,25 @@ namespace Sequencer
              */
             if (targetWord != string.Empty)
             {
+                if (wordItem.Capitalize == CapitalizeEnum.Proper)
+                {
+                    targetWord = targetWord[0].ToString().ToUpper() + targetWord.Substring(1);
+                }
+                else if (wordItem.Capitalize != CapitalizeEnum.Never)
+                {
+                    string capitalizedWord = string.Empty;
+                    foreach (char c in targetWord)
+                        if ((int)cryptoRandom.GetRandomInRange(1, 100) <= (int)wordItem.Capitalize)
+                            capitalizedWord += c.ToString().ToUpper();
+                        else
+                            capitalizedWord += c.ToString().ToLower();
+                    targetWord = capitalizedWord;
+                }
+                else
+                {
+                    targetWord = targetWord.ToLower();
+                }
+
                 if (wordItem.Substitution > PercentEnum.Never)
                 {
                     List<BaseSubstitution> applicableSubstitution = new List<BaseSubstitution>();
@@ -169,25 +188,6 @@ namespace Sequencer
                             targetWord = ApplySubstitutionItem(substitution, targetWord);
                         }
                     }
-                }
-
-                if (wordItem.Capitalize == CapitalizeEnum.Proper)
-                {
-                    targetWord = targetWord[0].ToString().ToUpper() + targetWord.Substring(1);
-                }
-                else if (wordItem.Capitalize != CapitalizeEnum.Never)
-                {
-                    string capitalizedWord = string.Empty;
-                    foreach (char c in targetWord)
-                        if ((int)cryptoRandom.GetRandomInRange(1, 100) <= (int)wordItem.Capitalize)
-                            capitalizedWord += c.ToString().ToUpper();
-                        else
-                            capitalizedWord += c.ToString().ToLower();
-                    targetWord = capitalizedWord;
-                }
-                else
-                {
-                    targetWord = targetWord.ToLower();
                 }
             }
             return targetWord;

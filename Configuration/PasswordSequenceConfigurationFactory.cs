@@ -132,18 +132,18 @@ namespace Sequencer.Configuration
             PasswordSequenceConfiguration config = null;
             try
             {
-                using (FileStream configStream = File.OpenRead(path))
+                if (File.Exists(path))
                 {
-                    if (File.Exists(path))
+                    using (FileStream configStream = File.OpenRead(path))
                     {
                         config = LoadFromStream(configStream);
                     }
-                    else
-                    {
-                        /* Config file not found; create empty config */
-                        config = new PasswordSequenceConfiguration(true);
-                        /* TODO: pop up an error message or something? */
-                    }
+                }
+                else
+                {
+                    /* Config file not found; create empty config */
+                    config = new PasswordSequenceConfiguration(true);
+                    /* TODO: pop up an error message or something? */
                 }
             }
             catch (InvalidOperationException)

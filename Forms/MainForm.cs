@@ -489,7 +489,6 @@ namespace Sequencer.Forms
             this.lblClose = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.lnkTop5k = new System.Windows.Forms.LinkLabel();
-            this.substitutionList1 = new global::Sequencer.Forms.SubstitutionListControl();
             this.label3 = new System.Windows.Forms.Label();
             this.txtCharacterList = new System.Windows.Forms.TextBox();
             this.txtWordList = new System.Windows.Forms.TextBox();
@@ -537,6 +536,7 @@ namespace Sequencer.Forms
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.substitutionList1 = new global::Sequencer.Forms.SubstitutionListControl();
             label4 = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -649,18 +649,6 @@ namespace Sequencer.Forms
             this.lnkTop5k.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.lnkTop5k.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkTop5k_LinkClicked);
             // 
-            // substitutionList1
-            // 
-            this.substitutionList1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.substitutionList1.Location = new System.Drawing.Point(13, 197);
-            this.substitutionList1.Name = "substitutionList1";
-            this.substitutionList1.Size = new System.Drawing.Size(812, 127);
-            this.substitutionList1.Substitutions = null;
-            this.substitutionList1.TabIndex = 5;
-            this.substitutionList1.SelectedIndexChanged += new System.EventHandler(this.substitutionList1_SelectedIndexChanged);
-            this.substitutionList1.SubstitutionChanged += new System.EventHandler(this.substitutionList1_SubstitutionChanged);
-            // 
             // label3
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -681,6 +669,7 @@ namespace Sequencer.Forms
             this.txtCharacterList.Size = new System.Drawing.Size(812, 68);
             this.txtCharacterList.TabIndex = 3;
             this.txtCharacterList.TextChanged += new System.EventHandler(this.txtCharacterList_TextChanged);
+            this.txtCharacterList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TextboxSelectText);
             // 
             // txtWordList
             // 
@@ -694,6 +683,7 @@ namespace Sequencer.Forms
             this.txtWordList.Size = new System.Drawing.Size(811, 61);
             this.txtWordList.TabIndex = 1;
             this.txtWordList.TextChanged += new System.EventHandler(this.txtWordList_TextChanged);
+            this.txtWordList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TextboxSelectText);
             // 
             // toolStrip2
             // 
@@ -1084,6 +1074,18 @@ namespace Sequencer.Forms
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
+            // substitutionList1
+            // 
+            this.substitutionList1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.substitutionList1.Location = new System.Drawing.Point(13, 197);
+            this.substitutionList1.Name = "substitutionList1";
+            this.substitutionList1.Size = new System.Drawing.Size(812, 127);
+            this.substitutionList1.Substitutions = null;
+            this.substitutionList1.TabIndex = 5;
+            this.substitutionList1.SelectedIndexChanged += new System.EventHandler(this.substitutionList1_SelectedIndexChanged);
+            this.substitutionList1.SubstitutionChanged += new System.EventHandler(this.substitutionList1_SubstitutionChanged);
+            // 
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(836, 661);
@@ -1148,7 +1150,7 @@ namespace Sequencer.Forms
             {
                 try
                 {
-                    Configuration = new Sequencer().Load(result);
+                    Configuration = new PasswordSequenceConfigurationFactory().LoadFromUserFile(result);
 
                 }
                 catch (Exception)
@@ -1265,6 +1267,13 @@ namespace Sequencer.Forms
             }
         }
 
-
+        private void TextboxSelectText(object sender, KeyEventArgs e)
+        {
+            TextBox textbox = sender as TextBox;
+            if (textbox != null && e.Control && e.KeyCode == Keys.A)
+            {
+                textbox.SelectAll();
+            }
+        }
     }
 }
