@@ -29,7 +29,15 @@ namespace Sequencer.Forms
 
             if (m.Msg == 0x0F) // This is WM_PAINT. For some reason C# doesn't seem to provide NAMES for these stupid things.
             {
-                string readout_str = Value.ToString() + " bits";
+                string readout_str = " (" + Value.ToString() + " bits)";
+
+                int i = 0;
+                while (StrengthValues[i+1].threshold < Value)
+                {
+                  i+=1;
+                }
+                readout_str = StrengthValues[i].name + readout_str;
+
                 /* based on
                  * http://www.codeproject.com/Articles/31406/Add-the-Percent-or-Any-Text-into-a-Standard-Progre
                  */
@@ -44,5 +52,16 @@ namespace Sequencer.Forms
                 }
             }
         }
+
+        private struct StrengthValType { public int threshold; public string name; };
+
+        /* strength thresholds by entropy from http://keepass.info/help/kb/pw_quality_est.html */
+        private readonly StrengthValType[] StrengthValues = {
+          new StrengthValType {threshold = 0,   name = "Very weak"},
+          new StrengthValType {threshold = 64,  name = "Weak"},
+          new StrengthValType {threshold = 80,  name = "Moderate"},
+          new StrengthValType {threshold = 112, name = "Strong"},
+          new StrengthValType {threshold = 128, name = "Very strong"}
+        };
     }
 }
