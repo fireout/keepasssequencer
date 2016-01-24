@@ -153,8 +153,6 @@ namespace Sequencer.Configuration
 
         private PasswordSequenceConfiguration LoadFromStream(Stream stream)
         {
-            PasswordSequenceConfiguration config = null;
-
             XmlSerializer serializer = new XmlSerializer(typeof(PasswordSequenceConfiguration),
                                                          "http://quasivirtuel.com/PasswordSequenceConfiguration.xsd");
 

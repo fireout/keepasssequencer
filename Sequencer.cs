@@ -162,10 +162,12 @@ namespace Sequencer
                 {
                     string capitalizedWord = string.Empty;
                     foreach (char c in targetWord)
+                    {
                         if ((int)cryptoRandom.GetRandomInRange(1, 100) <= (int)wordItem.Capitalize)
                             capitalizedWord += c.ToString().ToUpper();
                         else
                             capitalizedWord += c.ToString().ToLower();
+                    }
                     targetWord = capitalizedWord;
                 }
                 else
@@ -188,7 +190,8 @@ namespace Sequencer
                     {
                         if ((int)cryptoRandom.GetRandomInRange(1, 100) <= (int)wordItem.Substitution)
                         {
-                            targetWord = ApplySubstitutionItem(substitution, targetWord);
+                            int numhits = 0;
+                            targetWord = ApplySubstitutionItem(substitution, targetWord, ref numhits);
                         }
                     }
                 }
@@ -196,16 +199,17 @@ namespace Sequencer
             return targetWord;
         }
 
-        public string ApplySubstitutionItem(BaseSubstitution substitution, string word)
+        public static string ApplySubstitutionItem(BaseSubstitution substitution, string word, ref int substitutionCount)
         {
             if (substitution is WholeSubstitution)
-                return ApplySubstitutionItem((WholeSubstitution)substitution, word);
-            if (substitution is AnySubstitution)
-                return ApplySubstitutionItem((AnySubstitution)substitution, word);
-            return null;
+                return ApplySubstitutionItem((WholeSubstitution)substitution, word, ref substitutionCount);
+            else if (substitution is AnySubstitution)
+                return ApplySubstitutionItem((AnySubstitution)substitution, word, ref substitutionCount);
+            else
+                return null;
         }
 
-        public string ApplySubstitutionItem(WholeSubstitution substitution, string word)
+        public static string ApplySubstitutionItem(WholeSubstitution substitution, string word, ref int substitutionCount)
         {
             string substitutedWord = string.Empty;
             string replacePattern = substitution.Replace;
@@ -218,13 +222,18 @@ namespace Sequencer
             for (int i = 0; i < word.Length; i++)
             {
                 if (cursorWord.Substring(i).StartsWith(replacePattern))
+                {
                     substitutedWord += substitution.With;
+                    substitutionCount += 1;
+                }
                 else
+                {
                     substitutedWord += word[i];
+                }
             }
             return substitutedWord;
         }
-        public string ApplySubstitutionItem(AnySubstitution substitution, string word)
+        public static string ApplySubstitutionItem(AnySubstitution substitution, string word, ref int substitutionCount)
         {
             string substitutedWord = string.Empty;
             string replacePattern = substitution.Replace;
@@ -237,7 +246,10 @@ namespace Sequencer
             for (int i = 0; i < word.Length; i++)
             {
                 if (replacePattern.Contains(cursorWord[i].ToString()))
+                {
                     substitutedWord += substitution.With;
+                    substitutionCount += 1;
+                }
                 else
                     substitutedWord += word[i];
             }

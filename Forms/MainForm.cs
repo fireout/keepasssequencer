@@ -46,8 +46,8 @@ namespace Sequencer.Forms
         private ToolStrip toolStrip2;
         private ToolStripButton toolStripButton2;
         private ToolStripButton tsbDeleteSubstitution;
-        private ProgressBar strengthBar;
         private SubstitutionListControl substitutionList1;
+        private StrengthBar strengthBar;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem fileToolStripMenuItem;
         private ToolStripMenuItem loadToolStripMenuItem;
@@ -196,6 +196,7 @@ namespace Sequencer.Forms
                 listPreviews.Items.Add(sequencer.GenerateSequence(Configuration, randomizer));
             }
             strengthBar.Value = Math.Min((int)entropy, strengthBar.Maximum);
+
             UpdateToolstipButtons();
             UpdateSubstitutionToolbar();
         }
@@ -500,7 +501,6 @@ namespace Sequencer.Forms
             this.lblCharacters = new System.Windows.Forms.Label();
             this.lblWords = new System.Windows.Forms.Label();
             this.listPreviews = new System.Windows.Forms.ListView();
-            this.strengthBar = new System.Windows.Forms.ProgressBar();
             this.lvSequence = new System.Windows.Forms.ListView();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
@@ -520,6 +520,7 @@ namespace Sequencer.Forms
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbUp = new System.Windows.Forms.ToolStripButton();
             this.tsbDown = new System.Windows.Forms.ToolStripButton();
+            this.strengthBar = new StrengthBar();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.defaultWordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -578,8 +579,8 @@ namespace Sequencer.Forms
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.listPreviews);
-            this.splitContainer1.Panel2.Controls.Add(label5);
             this.splitContainer1.Panel2.Controls.Add(this.strengthBar);
+            this.splitContainer1.Panel2.Controls.Add(label5);
             this.splitContainer1.Panel2.Controls.Add(this.lvSequence);
             this.splitContainer1.Panel2.Controls.Add(this.toolStrip1);
             this.splitContainer1.Size = new System.Drawing.Size(509, 451);
@@ -746,19 +747,6 @@ namespace Sequencer.Forms
             this.listPreviews.TabIndex = 6;
             this.listPreviews.UseCompatibleStateImageBehavior = false;
             this.listPreviews.View = System.Windows.Forms.View.List;
-            // 
-            // strengthBar
-            // 
-            this.strengthBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.strengthBar.Location = new System.Drawing.Point(194, 150);
-            this.strengthBar.MarqueeAnimationSpeed = 500;
-            this.strengthBar.Maximum = 128;
-            this.strengthBar.Name = "strengthBar";
-            this.strengthBar.Size = new System.Drawing.Size(312, 20);
-            this.strengthBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.strengthBar.TabIndex = 4;
-            this.strengthBar.Value = 46;
             // 
             // lvSequence
             // 
@@ -936,6 +924,19 @@ namespace Sequencer.Forms
             this.tsbDown.Size = new System.Drawing.Size(23, 22);
             this.tsbDown.Text = "tsbDown";
             this.tsbDown.Click += new System.EventHandler(this.tsbDown_Click);
+            // 
+            // strengthBar
+            // 
+            this.strengthBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.strengthBar.Location = new System.Drawing.Point(194, 150);
+            this.strengthBar.MarqueeAnimationSpeed = 1000;
+            this.strengthBar.Maximum = 128;
+            this.strengthBar.Name = "strengthBar";
+            this.strengthBar.Size = new System.Drawing.Size(312, 20);
+            this.strengthBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.strengthBar.TabIndex = 4;
+            this.strengthBar.Value = 46;
             // 
             // menuStrip1
             // 

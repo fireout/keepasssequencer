@@ -23,17 +23,44 @@ namespace Sequencer.Configuration.Model
 
             if (Length > 0)
             {
-                if (Characters.Count > 0)
+                uint len = Length;
+                uint charlist_len = 0;
+                if (Characters != null)
                 {
-                    entropyVal += Math.Log(Characters.Count, 2);
+                    charlist_len = (uint)Characters.Count;
                 }
-                if (config.DefaultCharacters.Count > 0 && !Characters.Override)
+                if (Characters == null || !Characters.Override)
                 {
-                    entropyVal += Math.Log(config.DefaultCharacters.Count, 2);
+                    charlist_len += (uint)config.DefaultCharacters.Count;
                 }
-                entropyVal *= Length;
+
+                if (!AllowDuplicate)
+                {
+                    len = (len <= charlist_len ? len : charlist_len);
+                }
+
+                double cur_len_entropy = 0.0;
+                uint cur_len = len;
+                while (cur_len > 0 && charlist_len > 0)
+                {
+                    cur_len_entropy += Math.Log(charlist_len, 2);
+
+                    if (LengthStrength < StrengthEnum.Full)
+                    {
+                        if (cur_len > 1)
+                        {
+                            entropyVal += (1 - (double)LengthStrength / 100) * cur_len_entropy / len;
+                        }
+                    }
+
+                    if (!AllowDuplicate)
+                    {
+                        charlist_len -= 1;
+                    }
+                    cur_len -= 1;
+                }
+                entropyVal +=  ((double)LengthStrength / 100) * cur_len_entropy;
             }
-            /* TODO: other properties */
 
             return entropyVal;
         }

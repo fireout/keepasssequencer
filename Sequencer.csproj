@@ -98,6 +98,12 @@
     </Compile>
     <Compile Include="Forms\Direction.cs" />
     <Compile Include="Forms\Orientation.cs" />
+    <Compile Include="Forms\StrengthBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\StrengthBar.Designer.cs">
+      <DependentUpon>StrengthBar.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\SubstitutionForm.cs">
       <SubType>Form</SubType>
     </Compile>
