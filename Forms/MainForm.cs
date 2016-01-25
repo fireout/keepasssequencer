@@ -110,12 +110,16 @@ namespace Sequencer.Forms
             {
                 Configuration = new Sequencer().Load();
             }
+<<<<<<< HEAD
             if (Sequencer.GetAdvancedOptionRequired(Configuration))
             {
                 advancedModeToolStripMenuItem.Checked = true;
                 advancedModeToolStripMenuItem_Click(advancedModeToolStripMenuItem, new EventArgs());
             }
 
+=======
+            UpdateWindowTitle();
+>>>>>>> develop
 
             LoadConfigurationDetails(true);
         }
@@ -765,7 +769,11 @@ namespace Sequencer.Forms
             // 
             // strengthBar
             // 
+<<<<<<< HEAD
             this.strengthBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+=======
+            this.strengthBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+>>>>>>> develop
             | System.Windows.Forms.AnchorStyles.Right)));
             this.strengthBar.Location = new System.Drawing.Point(194, 150);
             this.strengthBar.MarqueeAnimationSpeed = 1000;
@@ -1064,7 +1072,6 @@ namespace Sequencer.Forms
             this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
             this.loadToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.loadToolStripMenuItem.Text = "Load";
-            this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
@@ -1099,6 +1106,7 @@ namespace Sequencer.Forms
             this.Name = "MainForm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Tag = "Sequence Setup ({0})";
             this.Text = "Sequence Setup";
             this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -1147,38 +1155,39 @@ namespace Sequencer.Forms
             UpdateConfigurationSubstitutions();
         }
 
-        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            string result;
-            if (TryGetUserInput("Enter a configuration name, leave empty for default", @"\d*", out result, null))
-            {
-                try
-                {
-                    PasswordSequenceConfiguration config = new PasswordSequenceConfigurationFactory().LoadFromUserFile(result);
-                    if (config == null)
-                    {
-                        MessageBox.Show("An error occurred reading the Sequencer configuration file requested. " +
-                                         "It may be corrupt. Fix or delete and try again. " +
-                                         "A default configuration has been loaded.",
-                                         "Error Reading Configuration",
-                                         MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //private void LoadFromInput(object sender, EventArgs e)
+        //{
+        //    string result;
+        //    if (TryGetUserInput("Enter a configuration name, leave empty for default", @"\d*", out result, null))
+        //    {
+        //        try
+        //        {
+        //            PasswordSequenceConfiguration config = new PasswordSequenceConfigurationFactory().LoadFromUserFile(result);
+        //            if (config == null)
+        //            {
+        //                MessageBox.Show("An error occurred reading the Sequencer configuration file requested. " +
+        //                                 "It may be corrupt. Fix or delete and try again. " +
+        //                                 "A default configuration has been loaded.",
+        //                                 "Error Reading Configuration",
+        //                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                    }
-                    Configuration = config ?? new PasswordSequenceConfiguration(true);
+        //            }
+        //            Configuration = config ?? new PasswordSequenceConfiguration(true);
+        //            UpdateWindowTitle();
 
-                }
-                catch (Exception)
-                {
+        //        }
+        //        catch (Exception)
+        //        {
 
-                    MessageBox.Show("Could not load configuration");
-                }
-            }
-            else
-            {
-                MessageBox.Show("Invalid configuration name");
-            }
+        //            MessageBox.Show("Could not load configuration");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show("Invalid configuration name");
+        //    }
 
-        }
+        //}
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1187,11 +1196,20 @@ namespace Sequencer.Forms
             {
                 Configuration.Name = result;
                 new Sequencer().Save(Configuration);
+                UpdateWindowTitle();
             }
             else
             {
                 MessageBox.Show("Invalid configuration name");
             }
+        }
+
+        private void UpdateWindowTitle()
+        {
+            if (Configuration != null)
+                this.Text = string.Format(this.Tag.ToString(), Configuration.Name);
+            else
+                this.Text = string.Format(this.Tag.ToString(), string.Empty);
         }
 
         private void alphabetToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1277,6 +1295,7 @@ namespace Sequencer.Forms
             if (item != null)
             {
                 Configuration = new PasswordSequenceConfigurationFactory().LoadFromFile(item.Text);
+                UpdateWindowTitle();
                 LoadConfigurationDetails(true);
             }
         }
