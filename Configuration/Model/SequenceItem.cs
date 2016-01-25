@@ -15,7 +15,9 @@ namespace Sequencer.Configuration.Model
 
         [XmlIgnore]
         private PercentEnum _myProb;
-        public PercentEnum Probability {
+        [XmlIgnore]
+        public PercentEnum Probability
+        {
             get { return _myProb; }
             set
             {

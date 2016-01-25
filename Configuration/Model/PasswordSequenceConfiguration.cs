@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace Sequencer.Configuration
+namespace Sequencer.Configuration.Model
 {
     [XmlRoot(ElementName = "PasswordSequenceConfiguration")]
     public class PasswordSequenceConfiguration

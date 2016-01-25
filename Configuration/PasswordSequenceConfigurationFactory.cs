@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
+using Sequencer.Configuration.Model;
 
 namespace Sequencer.Configuration
 {

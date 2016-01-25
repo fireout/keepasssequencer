@@ -13,6 +13,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <StartAction>Program</StartAction>
-    <StartProgram>bin\debug\KeePass.exe</StartProgram>
+    <StartProgram>O:\documents\code\keepasssequencer\bin\debug\KeePass.exe</StartProgram>
   </PropertyGroup>
 </Project>
