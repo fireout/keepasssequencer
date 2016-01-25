@@ -12,7 +12,6 @@ using System.Windows.Forms.VisualStyles;
 using Sequencer.Configuration;
 using Sequencer.Configuration.Model;
 using KeePassLib.Cryptography;
-using Sequencer.Configuration;
 
 namespace Sequencer.Forms
 {
@@ -67,6 +66,8 @@ namespace Sequencer.Forms
         private Label lblClose;
         private Label label6;
         private ListView listPreviews;
+        private ToolStripSeparator toolStripSeparator3;
+        private ToolStripMenuItem fromFileToolStripMenuItem;
 
         private System.Timers.Timer wordlistUpdateTimer;
         public delegate void LoadConfigDelegate(bool loadTextFields);
@@ -281,9 +282,12 @@ namespace Sequencer.Forms
             WordSequenceItem wordItem = item as WordSequenceItem;
             if (wordItem != null)
             {
-                string wordList;
-                if (TryGetUserInput("Enter the word list", "/w+", out wordList, wordItem.Words != null ? string.Join(" ", wordItem.Words.ToArray()) : ""))
+                WordListEdit listEditor = new WordListEdit((wordItem.Words != null ? string.Join(" ", wordItem.Words.ToArray()) : ""), this);
+                listEditor.ShowDialog();
+
+                if (listEditor.DialogResult == DialogResult.OK)
                 {
+                    string wordList = listEditor.ReturnVal;
                     if (wordItem.Words == null)
                     {
                         wordItem.Words = new OverridingWordList();
@@ -293,8 +297,8 @@ namespace Sequencer.Forms
                     {
                         wordItem.Words.AddRange(wordList.Split(' '));
                     }
+                    LoadConfigurationDetails();
                 }
-                LoadConfigurationDetails();
                 return;
             }
             CharacterSequenceItem charItem = item as CharacterSequenceItem;
@@ -458,6 +462,8 @@ namespace Sequencer.Forms
             lblCharacters.Text = string.Format(lblCharacters.Tag.ToString(), charList.Count);
             Configuration.DefaultCharacters = charList;
 
+            RefitTextEntry();
+
             wordlistUpdateTimer.Stop();
             wordlistUpdateTimer.Start();
         }
@@ -468,6 +474,8 @@ namespace Sequencer.Forms
             wordList.AddRange(txtWordList.Text.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
             lblWords.Text = string.Format(lblWords.Tag.ToString(), wordList.Count);
             Configuration.DefaultWords = wordList;
+
+            RefitTextEntry();
 
             wordlistUpdateTimer.Stop();
             wordlistUpdateTimer.Start();
@@ -501,6 +509,7 @@ namespace Sequencer.Forms
             this.lblCharacters = new System.Windows.Forms.Label();
             this.lblWords = new System.Windows.Forms.Label();
             this.listPreviews = new System.Windows.Forms.ListView();
+            this.strengthBar = new StrengthBar();
             this.lvSequence = new System.Windows.Forms.ListView();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
@@ -520,7 +529,6 @@ namespace Sequencer.Forms
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbUp = new System.Windows.Forms.ToolStripButton();
             this.tsbDown = new System.Windows.Forms.ToolStripButton();
-            this.strengthBar = new StrengthBar();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.defaultWordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -528,6 +536,8 @@ namespace Sequencer.Forms
             this.bealeDicewareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newGeneralServiceListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.top5000ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.fromFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.defaultCharactersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.alphabetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.numbersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -589,12 +599,12 @@ namespace Sequencer.Forms
             // 
             // SponsorPanel
             // 
-            this.SponsorPanel.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.SponsorPanel.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.SponsorPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.SponsorPanel.Controls.Add(this.lblClose);
             this.SponsorPanel.Controls.Add(this.label6);
             this.SponsorPanel.Controls.Add(this.lnkTop5k);
-            this.SponsorPanel.Location = new System.Drawing.Point(16, 47);
+            this.SponsorPanel.Location = new System.Drawing.Point(143, 148);
             this.SponsorPanel.Name = "SponsorPanel";
             this.SponsorPanel.Size = new System.Drawing.Size(234, 110);
             this.SponsorPanel.TabIndex = 9;
@@ -747,6 +757,19 @@ namespace Sequencer.Forms
             this.listPreviews.TabIndex = 6;
             this.listPreviews.UseCompatibleStateImageBehavior = false;
             this.listPreviews.View = System.Windows.Forms.View.List;
+            // 
+            // strengthBar
+            // 
+            this.strengthBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.strengthBar.Location = new System.Drawing.Point(194, 150);
+            this.strengthBar.MarqueeAnimationSpeed = 1000;
+            this.strengthBar.Maximum = 128;
+            this.strengthBar.Name = "strengthBar";
+            this.strengthBar.Size = new System.Drawing.Size(312, 20);
+            this.strengthBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.strengthBar.TabIndex = 4;
+            this.strengthBar.Value = 46;
             // 
             // lvSequence
             // 
@@ -925,19 +948,6 @@ namespace Sequencer.Forms
             this.tsbDown.Text = "tsbDown";
             this.tsbDown.Click += new System.EventHandler(this.tsbDown_Click);
             // 
-            // strengthBar
-            // 
-            this.strengthBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.strengthBar.Location = new System.Drawing.Point(194, 150);
-            this.strengthBar.MarqueeAnimationSpeed = 1000;
-            this.strengthBar.Maximum = 128;
-            this.strengthBar.Name = "strengthBar";
-            this.strengthBar.Size = new System.Drawing.Size(312, 20);
-            this.strengthBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.strengthBar.TabIndex = 4;
-            this.strengthBar.Value = 46;
-            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -966,7 +976,9 @@ namespace Sequencer.Forms
             this.dicewareToolStripMenuItem,
             this.bealeDicewareToolStripMenuItem,
             this.newGeneralServiceListToolStripMenuItem,
-            this.top5000ToolStripMenuItem});
+            this.top5000ToolStripMenuItem,
+            this.toolStripSeparator3,
+            this.fromFileToolStripMenuItem});
             this.defaultWordsToolStripMenuItem.Name = "defaultWordsToolStripMenuItem";
             this.defaultWordsToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.defaultWordsToolStripMenuItem.Text = "Default Words";
@@ -998,6 +1010,18 @@ namespace Sequencer.Forms
             this.top5000ToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.top5000ToolStripMenuItem.Text = "Top 5000 English words";
             this.top5000ToolStripMenuItem.Click += new System.EventHandler(this.top5000ToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(199, 6);
+            // 
+            // fromFileToolStripMenuItem
+            // 
+            this.fromFileToolStripMenuItem.Name = "fromFileToolStripMenuItem";
+            this.fromFileToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.fromFileToolStripMenuItem.Text = "From file...";
+            this.fromFileToolStripMenuItem.ToolTipText = "Add words from a text file of your choice";
             // 
             // defaultCharactersToolStripMenuItem
             // 
@@ -1051,7 +1075,7 @@ namespace Sequencer.Forms
             // 
             // MainForm
             // 
-            this.ClientSize = new System.Drawing.Size(509, 463);
+            this.ClientSize = new System.Drawing.Size(509, 464);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.splitContainer1);
             this.MinimizeBox = false;
@@ -1206,7 +1230,24 @@ namespace Sequencer.Forms
         {
             AppendWordList(global::Sequencer.Properties.Resources.top5k);
             if (!lnkTop5k.LinkVisited)
-                SponsorPanel.Visible = true;
+            {
+                ShowAttribution();
+            }
+        }
+
+        public void ShowAttribution()
+        {
+            SponsorPanel.Visible = true;
+        }
+
+        public bool AttributionWasViewed()
+        {
+            return lnkTop5k.LinkVisited;
+        }
+
+        public void SetAttributionViewed()
+        {
+            lnkTop5k.LinkVisited = true;
         }
 
         private void lblClose_Click(object sender, EventArgs e)
@@ -1216,7 +1257,7 @@ namespace Sequencer.Forms
 
         private void lnkTop5k_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            lnkTop5k.LinkVisited = true;
+            SetAttributionViewed();
             System.Diagnostics.Process.Start("http://www.wordfrequency.info/");
         }
 
@@ -1250,5 +1291,17 @@ namespace Sequencer.Forms
             }
         }
 
+        private void RefitTextEntry()
+        {
+            while (txtWordList.MaxLength <= txtWordList.Text.Length)
+            {
+                txtWordList.MaxLength = txtWordList.MaxLength * 3 / 2;
+            }
+
+            while (txtCharacterList.MaxLength <= txtCharacterList.Text.Length)
+            {
+                txtCharacterList.MaxLength = txtCharacterList.MaxLength * 3 / 2;
+            }
+        }
     }
 }

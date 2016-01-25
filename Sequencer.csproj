@@ -113,6 +113,12 @@
     <Compile Include="Forms\SubstitutionListControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Forms\WordListEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WordListEdit.Designer.cs">
+      <DependentUpon>WordListEdit.cs</DependentUpon>
+    </Compile>
     <Compile Include="GeneratorPlugin.cs" />
     <Compile Include="Forms\ListItem.cs" />
     <Compile Include="Forms\MainForm.cs">
@@ -140,6 +146,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SubstitutionForm.resx">
       <DependentUpon>SubstitutionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WordListEdit.resx">
+      <DependentUpon>WordListEdit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
