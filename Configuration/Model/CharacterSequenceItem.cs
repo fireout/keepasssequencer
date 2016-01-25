@@ -73,6 +73,7 @@ namespace Sequencer.Configuration.Model
 
         [XmlIgnore]
         private StrengthEnum _myLenStren;
+        [XmlIgnore]
         public StrengthEnum LengthStrength
         {
             get { return _myLenStren; }
