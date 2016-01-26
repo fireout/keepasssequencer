@@ -825,18 +825,19 @@ namespace Sequencer.Forms
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(29, 22);
             this.toolStripButton1.Text = "toolStripButton1";
+            this.toolStripButton1.ToolTipText = "Add Item";
             // 
             // wordToolStripMenuItem
             // 
             this.wordToolStripMenuItem.Name = "wordToolStripMenuItem";
-            this.wordToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.wordToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.wordToolStripMenuItem.Text = "Word";
             this.wordToolStripMenuItem.Click += new System.EventHandler(this.wordToolStripMenuItem_Click);
             // 
             // charactersToolStripMenuItem
             // 
             this.charactersToolStripMenuItem.Name = "charactersToolStripMenuItem";
-            this.charactersToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.charactersToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.charactersToolStripMenuItem.Text = "Characters";
             this.charactersToolStripMenuItem.Click += new System.EventHandler(this.characterToolStripMenuItem_Click);
             // 
@@ -848,6 +849,7 @@ namespace Sequencer.Forms
             this.tsbDelete.Name = "tsbDelete";
             this.tsbDelete.Size = new System.Drawing.Size(23, 22);
             this.tsbDelete.Text = "toolStripButton2";
+            this.tsbDelete.ToolTipText = "Remove Selected";
             this.tsbDelete.Click += new System.EventHandler(this.tsbDelete_Click);
             // 
             // toolStripSeparator1
@@ -863,6 +865,7 @@ namespace Sequencer.Forms
             this.tsbEdit.Name = "tsbEdit";
             this.tsbEdit.Size = new System.Drawing.Size(23, 22);
             this.tsbEdit.Text = "toolStripButton3";
+            this.tsbEdit.ToolTipText = "Edit Selected...";
             this.tsbEdit.Click += new System.EventHandler(this.tsbEdit_Click);
             // 
             // tsbOptions
@@ -880,6 +883,7 @@ namespace Sequencer.Forms
             this.tsbOptions.Name = "tsbOptions";
             this.tsbOptions.Size = new System.Drawing.Size(29, 22);
             this.tsbOptions.Text = "toolStripDropDownButton1";
+            this.tsbOptions.ToolTipText = "Configure Item";
             // 
             // probabilityToolStripMenuItem
             // 
@@ -936,6 +940,7 @@ namespace Sequencer.Forms
             this.tsbUp.Name = "tsbUp";
             this.tsbUp.Size = new System.Drawing.Size(23, 22);
             this.tsbUp.Text = "tsbUp";
+            this.tsbUp.ToolTipText = "Move Item Up";
             this.tsbUp.Click += new System.EventHandler(this.tsbUp_Click);
             // 
             // tsbDown
@@ -946,6 +951,7 @@ namespace Sequencer.Forms
             this.tsbDown.Name = "tsbDown";
             this.tsbDown.Size = new System.Drawing.Size(23, 22);
             this.tsbDown.Text = "tsbDown";
+            this.tsbDown.ToolTipText = "Move Item Down";
             this.tsbDown.Click += new System.EventHandler(this.tsbDown_Click);
             // 
             // menuStrip1
