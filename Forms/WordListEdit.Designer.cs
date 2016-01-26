@@ -53,6 +53,7 @@
             this.wordList.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.wordList.Size = new System.Drawing.Size(260, 87);
             this.wordList.TabIndex = 0;
+            this.wordList.TextChanged += new System.EventHandler(this.wordList_TextChanged);
             // 
             // toolStrip1
             // 

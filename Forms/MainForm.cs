@@ -1022,6 +1022,7 @@ namespace Sequencer.Forms
             this.fromFileToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.fromFileToolStripMenuItem.Text = "From file...";
             this.fromFileToolStripMenuItem.ToolTipText = "Add words from a text file of your choice";
+            this.fromFileToolStripMenuItem.Click += new System.EventHandler(this.fromFileToolStripMenuItem_Click);
             // 
             // defaultCharactersToolStripMenuItem
             // 
@@ -1232,6 +1233,29 @@ namespace Sequencer.Forms
             if (!lnkTop5k.LinkVisited)
             {
                 ShowAttribution();
+            }
+        }
+
+        private void fromFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.Filter = "Text files (*.txt)|*.txt|All files|*";
+            fileDialog.Title = "Get all words from file";
+
+            if (fileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string allWords = System.IO.File.ReadAllText(fileDialog.FileName).ToLower();
+
+                char[] nonWordChars = { ' ', '\r', '\n', '\t', '.', '!', '?', ',', ':', ';', '"', '(', ')', '<', '>', '=', '/', '\\' };
+                string[] newWords = allWords.Split(nonWordChars, StringSplitOptions.RemoveEmptyEntries);
+
+                if (newWords.Length > 0)
+                {
+                    System.Array.Sort(newWords);
+                    newWords = newWords.Distinct().ToArray();
+
+                    AppendWordList(System.String.Join(" ", newWords));
+                }
             }
         }
 

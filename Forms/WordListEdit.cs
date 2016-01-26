@@ -17,6 +17,7 @@ namespace Sequencer.Forms
             wordList.Text = currentWords;
             ReturnVal = currentWords;
             this.parentForm = parentForm;
+            RefitTextEntry();
         }
 
         public string ReturnVal { get; private set; }
@@ -64,7 +65,31 @@ namespace Sequencer.Forms
 
         private void addTxtFileButton_Click(object sender, EventArgs e)
         {
-        
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.Filter = "Text files (*.txt)|*.txt|All files|*";
+            fileDialog.Title = "Get all words from file";
+
+            if (fileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string allWords = System.IO.File.ReadAllText(fileDialog.FileName).ToLower();
+
+                char[] nonWordChars = { ' ', '\r', '\n', '\t', '.', '!', '?', ',', ':', ';', '"', '(', ')', '<', '>', '=', '/', '\\' };
+                string[] newWords = allWords.Split(nonWordChars, StringSplitOptions.RemoveEmptyEntries);
+
+                if (newWords.Length > 0)
+                {
+                    System.Array.Sort(newWords);
+                    newWords = newWords.Distinct().ToArray();
+
+                    wordList.SelectedText = System.String.Join(" ", newWords);
+
+                    RefitTextEntry();
+                }
+            }
+        }
+
+        private void wordList_TextChanged(object sender, EventArgs e)
+        {
             RefitTextEntry();
         }
 
