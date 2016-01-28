@@ -110,16 +110,13 @@ namespace Sequencer.Forms
             {
                 Configuration = new Sequencer().Load();
             }
-<<<<<<< HEAD
             if (Sequencer.GetAdvancedOptionRequired(Configuration))
             {
                 advancedModeToolStripMenuItem.Checked = true;
                 advancedModeToolStripMenuItem_Click(advancedModeToolStripMenuItem, new EventArgs());
             }
 
-=======
             UpdateWindowTitle();
->>>>>>> develop
 
             LoadConfigurationDetails(true);
         }
@@ -769,11 +766,7 @@ namespace Sequencer.Forms
             // 
             // strengthBar
             // 
-<<<<<<< HEAD
-            this.strengthBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-=======
             this.strengthBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
->>>>>>> develop
             | System.Windows.Forms.AnchorStyles.Right)));
             this.strengthBar.Location = new System.Drawing.Point(194, 150);
             this.strengthBar.MarqueeAnimationSpeed = 1000;
@@ -1154,40 +1147,6 @@ namespace Sequencer.Forms
         {
             UpdateConfigurationSubstitutions();
         }
-
-        //private void LoadFromInput(object sender, EventArgs e)
-        //{
-        //    string result;
-        //    if (TryGetUserInput("Enter a configuration name, leave empty for default", @"\d*", out result, null))
-        //    {
-        //        try
-        //        {
-        //            PasswordSequenceConfiguration config = new PasswordSequenceConfigurationFactory().LoadFromUserFile(result);
-        //            if (config == null)
-        //            {
-        //                MessageBox.Show("An error occurred reading the Sequencer configuration file requested. " +
-        //                                 "It may be corrupt. Fix or delete and try again. " +
-        //                                 "A default configuration has been loaded.",
-        //                                 "Error Reading Configuration",
-        //                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-        //            }
-        //            Configuration = config ?? new PasswordSequenceConfiguration(true);
-        //            UpdateWindowTitle();
-
-        //        }
-        //        catch (Exception)
-        //        {
-
-        //            MessageBox.Show("Could not load configuration");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        MessageBox.Show("Invalid configuration name");
-        //    }
-
-        //}
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
