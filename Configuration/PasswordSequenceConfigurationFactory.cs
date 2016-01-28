@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
+using Sequencer.Configuration.Model;
 
 namespace Sequencer.Configuration
 {
@@ -117,7 +118,7 @@ namespace Sequencer.Configuration
         public ICollection<string> ListConfigurationFiles()
         {
             string path = GetUserFilePath();
-            if (Directory.Exists(path))
+            if (Directory.Exists(Path.GetDirectoryName(path)))
                 return Directory.GetFiles(Path.GetDirectoryName(path), string.Format("{0}*{1}", Path.GetFileNameWithoutExtension(path), Path.GetExtension(path)));
             return new List<string>();
         }

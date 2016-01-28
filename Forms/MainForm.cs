@@ -68,6 +68,8 @@ namespace Sequencer.Forms
         private ListView listPreviews;
         private ToolStripSeparator toolStripSeparator3;
         private ToolStripMenuItem fromFileToolStripMenuItem;
+        private ToolStripMenuItem optionsToolStripMenuItem;
+        internal ToolStripMenuItem advancedModeToolStripMenuItem;
 
         private System.Timers.Timer wordlistUpdateTimer;
         public delegate void LoadConfigDelegate(bool loadTextFields);
@@ -94,6 +96,12 @@ namespace Sequencer.Forms
             wordlistUpdateTimer.Elapsed += this.RefreshOnTimer;
         }
 
+        public MainForm(PasswordSequenceConfiguration configuration)
+            : this()
+        {
+            Configuration = configuration;
+        }
+
         public PasswordSequenceConfiguration Configuration { get; set; }
 
         protected override void OnLoad(EventArgs e)
@@ -104,6 +112,14 @@ namespace Sequencer.Forms
             {
                 Configuration = new Sequencer().Load();
             }
+
+            if (Sequencer.GetAdvancedOptionRequired(Configuration))
+            {
+                advancedModeToolStripMenuItem.Checked = true;
+                advancedModeToolStripMenuItem_Click(advancedModeToolStripMenuItem, new EventArgs());
+            }
+
+            UpdateWindowTitle();
 
             LoadConfigurationDetails(true);
         }
@@ -233,7 +249,7 @@ namespace Sequencer.Forms
             bool isWordItem = GetSelectedSequenceItem<WordSequenceItem>() != null;
             substitutionToolStripMenuItem.Visible = isWordItem;
             capitalizeToolStripMenuItem.Visible = isWordItem;
-            lengthStrengthToolStripMenuItem.Visible = !isWordItem;
+            lengthStrengthToolStripMenuItem.Visible = advancedModeToolStripMenuItem.Checked && !isWordItem;
             lengthToolStripMenuItem.Visible = !isWordItem;
         }
 
@@ -545,6 +561,8 @@ namespace Sequencer.Forms
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.advancedModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             label5 = new System.Windows.Forms.Label();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -568,8 +586,8 @@ namespace Sequencer.Forms
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.Location = new System.Drawing.Point(0, 12);
             this.splitContainer1.Name = "splitContainer1";
@@ -646,7 +664,7 @@ namespace Sequencer.Forms
             // 
             // substitutionList1
             // 
-            this.substitutionList1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.substitutionList1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.substitutionList1.Location = new System.Drawing.Point(272, 30);
             this.substitutionList1.Name = "substitutionList1";
@@ -668,7 +686,7 @@ namespace Sequencer.Forms
             // 
             // txtCharacterList
             // 
-            this.txtCharacterList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtCharacterList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCharacterList.Location = new System.Drawing.Point(8, 195);
             this.txtCharacterList.Multiline = true;
@@ -680,8 +698,8 @@ namespace Sequencer.Forms
             // 
             // txtWordList
             // 
-            this.txtWordList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtWordList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWordList.Location = new System.Drawing.Point(8, 30);
             this.txtWordList.Multiline = true;
@@ -748,8 +766,8 @@ namespace Sequencer.Forms
             // 
             // listPreviews
             // 
-            this.listPreviews.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.listPreviews.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listPreviews.Location = new System.Drawing.Point(194, 28);
             this.listPreviews.Name = "listPreviews";
@@ -760,7 +778,7 @@ namespace Sequencer.Forms
             // 
             // strengthBar
             // 
-            this.strengthBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.strengthBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.strengthBar.Location = new System.Drawing.Point(194, 150);
             this.strengthBar.MarqueeAnimationSpeed = 1000;
@@ -773,7 +791,7 @@ namespace Sequencer.Forms
             // 
             // lvSequence
             // 
-            this.lvSequence.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.lvSequence.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)));
             this.lvSequence.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lvSequence.FullRowSelect = true;
@@ -824,14 +842,15 @@ namespace Sequencer.Forms
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(29, 22);
-            this.toolStripButton1.Text = "toolStripButton1";
-            this.toolStripButton1.ToolTipText = "Add Item";
+            this.toolStripButton1.Text = "Add";
+            this.toolStripButton1.ToolTipText = "Add sequence item";
             // 
             // wordToolStripMenuItem
             // 
             this.wordToolStripMenuItem.Name = "wordToolStripMenuItem";
             this.wordToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.wordToolStripMenuItem.Text = "Word";
+            this.wordToolStripMenuItem.ToolTipText = "Add word item";
             this.wordToolStripMenuItem.Click += new System.EventHandler(this.wordToolStripMenuItem_Click);
             // 
             // charactersToolStripMenuItem
@@ -839,6 +858,7 @@ namespace Sequencer.Forms
             this.charactersToolStripMenuItem.Name = "charactersToolStripMenuItem";
             this.charactersToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.charactersToolStripMenuItem.Text = "Characters";
+            this.charactersToolStripMenuItem.ToolTipText = "Add characters item";
             this.charactersToolStripMenuItem.Click += new System.EventHandler(this.characterToolStripMenuItem_Click);
             // 
             // tsbDelete
@@ -848,8 +868,8 @@ namespace Sequencer.Forms
             this.tsbDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbDelete.Name = "tsbDelete";
             this.tsbDelete.Size = new System.Drawing.Size(23, 22);
-            this.tsbDelete.Text = "toolStripButton2";
-            this.tsbDelete.ToolTipText = "Remove Selected";
+            this.tsbDelete.Text = "Delete";
+            this.tsbDelete.ToolTipText = "Delete selected item";
             this.tsbDelete.Click += new System.EventHandler(this.tsbDelete_Click);
             // 
             // toolStripSeparator1
@@ -864,8 +884,8 @@ namespace Sequencer.Forms
             this.tsbEdit.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbEdit.Name = "tsbEdit";
             this.tsbEdit.Size = new System.Drawing.Size(23, 22);
-            this.tsbEdit.Text = "toolStripButton3";
-            this.tsbEdit.ToolTipText = "Edit Selected...";
+            this.tsbEdit.Text = "Edit";
+            this.tsbEdit.ToolTipText = "Edit current item";
             this.tsbEdit.Click += new System.EventHandler(this.tsbEdit_Click);
             // 
             // tsbOptions
@@ -882,48 +902,50 @@ namespace Sequencer.Forms
             this.tsbOptions.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbOptions.Name = "tsbOptions";
             this.tsbOptions.Size = new System.Drawing.Size(29, 22);
-            this.tsbOptions.Text = "toolStripDropDownButton1";
+            this.tsbOptions.Text = "Options";
             this.tsbOptions.ToolTipText = "Configure Item";
             // 
             // probabilityToolStripMenuItem
             // 
             this.probabilityToolStripMenuItem.Name = "probabilityToolStripMenuItem";
-            this.probabilityToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.probabilityToolStripMenuItem.Text = "Probability";
+            this.probabilityToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.probabilityToolStripMenuItem.Text = "Probability *";
+            this.probabilityToolStripMenuItem.Visible = false;
             this.probabilityToolStripMenuItem.Click += new System.EventHandler(this.probabilityToolStripMenuItem_Click);
             // 
             // capitalizeToolStripMenuItem
             // 
             this.capitalizeToolStripMenuItem.Name = "capitalizeToolStripMenuItem";
-            this.capitalizeToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.capitalizeToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.capitalizeToolStripMenuItem.Text = "Capitalize";
             this.capitalizeToolStripMenuItem.Click += new System.EventHandler(this.capitalizeToolStripMenuItem_Click);
             // 
             // substitutionToolStripMenuItem
             // 
             this.substitutionToolStripMenuItem.Name = "substitutionToolStripMenuItem";
-            this.substitutionToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.substitutionToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.substitutionToolStripMenuItem.Text = "Substitution";
             this.substitutionToolStripMenuItem.Click += new System.EventHandler(this.substitutionToolStripMenuItem_Click);
             // 
             // lengthToolStripMenuItem
             // 
             this.lengthToolStripMenuItem.Name = "lengthToolStripMenuItem";
-            this.lengthToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.lengthToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.lengthToolStripMenuItem.Text = "Length";
             this.lengthToolStripMenuItem.Click += new System.EventHandler(this.lengthToolStripMenuItem_Click);
             // 
             // lengthStrengthToolStripMenuItem
             // 
             this.lengthStrengthToolStripMenuItem.Name = "lengthStrengthToolStripMenuItem";
-            this.lengthStrengthToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.lengthStrengthToolStripMenuItem.Text = "LengthStrength";
+            this.lengthStrengthToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.lengthStrengthToolStripMenuItem.Text = "LengthStrength *";
+            this.lengthStrengthToolStripMenuItem.Visible = false;
             this.lengthStrengthToolStripMenuItem.Click += new System.EventHandler(this.lengthStrengthToolStripMenuItem_Click);
             // 
             // includeDefaultsToolStripMenuItem
             // 
             this.includeDefaultsToolStripMenuItem.Name = "includeDefaultsToolStripMenuItem";
-            this.includeDefaultsToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.includeDefaultsToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.includeDefaultsToolStripMenuItem.Text = "Include Defaults";
             this.includeDefaultsToolStripMenuItem.Click += new System.EventHandler(this.includeDefaultsToolStripMenuItem_Click);
             // 
@@ -939,7 +961,7 @@ namespace Sequencer.Forms
             this.tsbUp.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbUp.Name = "tsbUp";
             this.tsbUp.Size = new System.Drawing.Size(23, 22);
-            this.tsbUp.Text = "tsbUp";
+            this.tsbUp.Text = "Move Up";
             this.tsbUp.ToolTipText = "Move Item Up";
             this.tsbUp.Click += new System.EventHandler(this.tsbUp_Click);
             // 
@@ -950,14 +972,15 @@ namespace Sequencer.Forms
             this.tsbDown.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbDown.Name = "tsbDown";
             this.tsbDown.Size = new System.Drawing.Size(23, 22);
-            this.tsbDown.Text = "tsbDown";
+            this.tsbDown.Text = "Move Down";
             this.tsbDown.ToolTipText = "Move Item Down";
             this.tsbDown.Click += new System.EventHandler(this.tsbDown_Click);
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.optionsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(509, 24);
@@ -1071,7 +1094,6 @@ namespace Sequencer.Forms
             this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
             this.loadToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.loadToolStripMenuItem.Text = "Load";
-            this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
@@ -1079,6 +1101,22 @@ namespace Sequencer.Forms
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            // 
+            // optionsToolStripMenuItem
+            // 
+            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.advancedModeToolStripMenuItem});
+            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.optionsToolStripMenuItem.Text = "Options";
+            // 
+            // advancedModeToolStripMenuItem
+            // 
+            this.advancedModeToolStripMenuItem.CheckOnClick = true;
+            this.advancedModeToolStripMenuItem.Name = "advancedModeToolStripMenuItem";
+            this.advancedModeToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.advancedModeToolStripMenuItem.Text = "Advanced Mode";
+            this.advancedModeToolStripMenuItem.Click += new System.EventHandler(this.advancedModeToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -1090,6 +1128,7 @@ namespace Sequencer.Forms
             this.Name = "MainForm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Tag = "Sequence Setup ({0})";
             this.Text = "Sequence Setup";
             this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -1138,38 +1177,39 @@ namespace Sequencer.Forms
             UpdateConfigurationSubstitutions();
         }
 
-        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            string result;
-            if (TryGetUserInput("Enter a configuration name, leave empty for default", @"\d*", out result, null))
-            {
-                try
-                {
-                    PasswordSequenceConfiguration config = new PasswordSequenceConfigurationFactory().LoadFromUserFile(result);
-                    if (config == null)
-                    {
-                        MessageBox.Show("An error occurred reading the Sequencer configuration file requested. " +
-                                         "It may be corrupt. Fix or delete and try again. " +
-                                         "A default configuration has been loaded.",
-                                         "Error Reading Configuration",
-                                         MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //private void LoadFromInput(object sender, EventArgs e)
+        //{
+        //    string result;
+        //    if (TryGetUserInput("Enter a configuration name, leave empty for default", @"\d*", out result, null))
+        //    {
+        //        try
+        //        {
+        //            PasswordSequenceConfiguration config = new PasswordSequenceConfigurationFactory().LoadFromUserFile(result);
+        //            if (config == null)
+        //            {
+        //                MessageBox.Show("An error occurred reading the Sequencer configuration file requested. " +
+        //                                 "It may be corrupt. Fix or delete and try again. " +
+        //                                 "A default configuration has been loaded.",
+        //                                 "Error Reading Configuration",
+        //                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                    }
-                    Configuration = config ?? new PasswordSequenceConfiguration(true);
+        //            }
+        //            Configuration = config ?? new PasswordSequenceConfiguration(true);
+        //            UpdateWindowTitle();
 
-                }
-                catch (Exception)
-                {
+        //        }
+        //        catch (Exception)
+        //        {
 
-                    MessageBox.Show("Could not load configuration");
-                }
-            }
-            else
-            {
-                MessageBox.Show("Invalid configuration name");
-            }
+        //            MessageBox.Show("Could not load configuration");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show("Invalid configuration name");
+        //    }
 
-        }
+        //}
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1178,11 +1218,20 @@ namespace Sequencer.Forms
             {
                 Configuration.Name = result;
                 new Sequencer().Save(Configuration);
+                UpdateWindowTitle();
             }
             else
             {
                 MessageBox.Show("Invalid configuration name");
             }
+        }
+
+        private void UpdateWindowTitle()
+        {
+            if (Configuration != null)
+                this.Text = string.Format(this.Tag.ToString(), Configuration.Name);
+            else
+                this.Text = string.Format(this.Tag.ToString(), string.Empty);
         }
 
         private void alphabetToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1308,6 +1357,7 @@ namespace Sequencer.Forms
             if (item != null)
             {
                 Configuration = new PasswordSequenceConfigurationFactory().LoadFromFile(item.Text);
+                UpdateWindowTitle();
                 LoadConfigurationDetails(true);
             }
         }
@@ -1319,6 +1369,21 @@ namespace Sequencer.Forms
             {
                 textbox.SelectAll();
             }
+        }
+
+        private void advancedModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (advancedModeToolStripMenuItem.Checked && (Sequencer.advancedOptionsEnabled == true ||
+                Sequencer.AdvancedOptionsDialog("Configuring password sequence using the advanced mode can result in the password being weaker that what is displaied by the strength bar. " +
+                "Toggling advanced mode will add options (marked with *) in the options menu for each sequence item") != System.Windows.Forms.DialogResult.OK))
+            {
+                advancedModeToolStripMenuItem.Checked = false;
+            }
+
+            probabilityToolStripMenuItem.Visible = advancedModeToolStripMenuItem.Checked;
+
+            bool isWordItem = GetSelectedSequenceItem<WordSequenceItem>() != null;
+            lengthStrengthToolStripMenuItem.Visible = !isWordItem && advancedModeToolStripMenuItem.Checked;
         }
 
         private void RefitTextEntry()
