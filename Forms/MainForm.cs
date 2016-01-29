@@ -1177,40 +1177,6 @@ namespace Sequencer.Forms
             UpdateConfigurationSubstitutions();
         }
 
-        //private void LoadFromInput(object sender, EventArgs e)
-        //{
-        //    string result;
-        //    if (TryGetUserInput("Enter a configuration name, leave empty for default", @"\d*", out result, null))
-        //    {
-        //        try
-        //        {
-        //            PasswordSequenceConfiguration config = new PasswordSequenceConfigurationFactory().LoadFromUserFile(result);
-        //            if (config == null)
-        //            {
-        //                MessageBox.Show("An error occurred reading the Sequencer configuration file requested. " +
-        //                                 "It may be corrupt. Fix or delete and try again. " +
-        //                                 "A default configuration has been loaded.",
-        //                                 "Error Reading Configuration",
-        //                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-        //            }
-        //            Configuration = config ?? new PasswordSequenceConfiguration(true);
-        //            UpdateWindowTitle();
-
-        //        }
-        //        catch (Exception)
-        //        {
-
-        //            MessageBox.Show("Could not load configuration");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        MessageBox.Show("Invalid configuration name");
-        //    }
-
-        //}
-
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string result;
