@@ -1231,6 +1231,7 @@ namespace Sequencer.Forms
                 Configuration.Name = result;
                 new Sequencer().Save(Configuration);
                 UpdateWindowTitle();
+                AddFoundTemplateMenuItem();
             }
             else
             {
@@ -1359,6 +1360,11 @@ namespace Sequencer.Forms
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
+            AddFoundTemplateMenuItem();
+        }
+
+        private void AddFoundTemplateMenuItem()
+        {
             loadToolStripMenuItem.DropDownItems.Clear();
 
             var factory = new PasswordSequenceConfigurationFactory();
@@ -1385,6 +1391,7 @@ namespace Sequencer.Forms
 
                 }
             }
+
         }
 
         void LoadFoundTemplate(object sender, EventArgs e)
