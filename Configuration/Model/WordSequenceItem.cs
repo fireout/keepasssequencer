@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sequencer.ItemVisitor;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -51,37 +52,38 @@ namespace Sequencer.Configuration.Model
                 avg_word_len += word.Length;
                 foreach (BaseSubstitution substitution in applicableSubstitution)
                 {
-                    Sequencer.ApplySubstitutionItem(substitution, word, ref subst_hit_count);
+                    subst_hit_count += new SubstitutionVisitor()
+                                            .CountSubstitution(substitution, word);
                 }
             }
             avg_word_len /= wordList.Count;
             double avg_subst_hits = (double)subst_hit_count / wordList.Count;
-            
+
             /* apply information added by capitalization */
             double cap_chance = 0;
             if (Capitalize != CapitalizeEnum.Proper)
             {
-                cap_chance = (double) Capitalize / 100.0;
+                cap_chance = (double)Capitalize / 100.0;
             }
             if (cap_chance > 0.0 && cap_chance < 1.0)
             {
-                entropyVal += avg_word_len * cap_chance * Math.Log(1/cap_chance, 2);
-                entropyVal += avg_word_len * (1-cap_chance) * Math.Log(1/(1-cap_chance), 2);
+                entropyVal += avg_word_len * cap_chance * Math.Log(1 / cap_chance, 2);
+                entropyVal += avg_word_len * (1 - cap_chance) * Math.Log(1 / (1 - cap_chance), 2);
             }
 
             /* apply average information added by substitutions */
             double subst_chance = (double)Substitution / 100.0;
-            subst_chance = (double) Substitution / 100.0;
+            subst_chance = (double)Substitution / 100.0;
             if (subst_chance > 0.0 && subst_chance < 1.0)
             {
-                entropyVal += avg_subst_hits * subst_chance * Math.Log(1/subst_chance, 2);
-                entropyVal += avg_subst_hits * (1-subst_chance) * Math.Log(1/(1-subst_chance), 2);
+                entropyVal += avg_subst_hits * subst_chance * Math.Log(1 / subst_chance, 2);
+                entropyVal += avg_subst_hits * (1 - subst_chance) * Math.Log(1 / (1 - subst_chance), 2);
             }
 
             /* Chance of not including the word actually decreases entropy
              * because there is a chance the attacker needs to try fewer words.
              */
-            entropyVal = entropyVal * (double) Probability / 100;
+            entropyVal = entropyVal * (double)Probability / 100;
 
             return entropyVal;
         }
@@ -123,7 +125,8 @@ namespace Sequencer.Configuration.Model
         [XmlIgnore]
         private PercentEnum _mySubstPercent;
         [XmlIgnore]
-        public PercentEnum Substitution {
+        public PercentEnum Substitution
+        {
             get { return _mySubstPercent; }
             set
             {
