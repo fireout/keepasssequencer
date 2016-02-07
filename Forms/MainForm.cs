@@ -66,6 +66,8 @@ namespace Sequencer.Forms
         private Label lblClose;
         private Label label6;
         private ListView listPreviews;
+        private ToolStripSeparator toolStripSeparator3;
+        private ToolStripMenuItem fromFileToolStripMenuItem;
         private ToolStripMenuItem optionsToolStripMenuItem;
         internal ToolStripMenuItem advancedModeToolStripMenuItem;
 
@@ -110,6 +112,7 @@ namespace Sequencer.Forms
             {
                 Configuration = new Sequencer().Load();
             }
+
             if (Sequencer.GetAdvancedOptionRequired(Configuration))
             {
                 advancedModeToolStripMenuItem.Checked = true;
@@ -295,9 +298,12 @@ namespace Sequencer.Forms
             WordSequenceItem wordItem = item as WordSequenceItem;
             if (wordItem != null)
             {
-                string wordList;
-                if (TryGetUserInput("Enter the word list", "/w+", out wordList, wordItem.Words != null ? string.Join(" ", wordItem.Words.ToArray()) : ""))
+                WordListEdit listEditor = new WordListEdit((wordItem.Words != null ? string.Join(" ", wordItem.Words.ToArray()) : ""), this);
+                listEditor.ShowDialog();
+
+                if (listEditor.DialogResult == DialogResult.OK)
                 {
+                    string wordList = listEditor.ReturnVal;
                     if (wordItem.Words == null)
                     {
                         wordItem.Words = new OverridingWordList();
@@ -307,15 +313,15 @@ namespace Sequencer.Forms
                     {
                         wordItem.Words.AddRange(wordList.Split(' '));
                     }
+                    LoadConfigurationDetails();
                 }
-                LoadConfigurationDetails();
                 return;
             }
             CharacterSequenceItem charItem = item as CharacterSequenceItem;
             if (charItem != null)
             {
                 string charList;
-                if (TryGetUserInput("Enter the char list", ".+", out charList, charItem.Characters != null ? string.Join(" ", charItem.Characters.Select(c => c.ToString()).ToArray()) : ""))
+                if (TryGetUserInput("Enter the character override list. Cancel to CLEAR THE LIST.", ".+", out charList, charItem.Characters != null ? string.Join(" ", charItem.Characters.Select(c => c.ToString()).ToArray()) : ""))
                 {
                     if (charItem.Characters == null)
                     {
@@ -472,6 +478,8 @@ namespace Sequencer.Forms
             lblCharacters.Text = string.Format(lblCharacters.Tag.ToString(), charList.Count);
             Configuration.DefaultCharacters = charList;
 
+            RefitTextEntry();
+
             wordlistUpdateTimer.Stop();
             wordlistUpdateTimer.Start();
         }
@@ -482,6 +490,8 @@ namespace Sequencer.Forms
             wordList.AddRange(txtWordList.Text.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
             lblWords.Text = string.Format(lblWords.Tag.ToString(), wordList.Count);
             Configuration.DefaultWords = wordList;
+
+            RefitTextEntry();
 
             wordlistUpdateTimer.Stop();
             wordlistUpdateTimer.Start();
@@ -542,6 +552,8 @@ namespace Sequencer.Forms
             this.bealeDicewareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newGeneralServiceListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.top5000ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.fromFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.defaultCharactersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.alphabetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.numbersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -574,8 +586,8 @@ namespace Sequencer.Forms
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.Location = new System.Drawing.Point(0, 12);
             this.splitContainer1.Name = "splitContainer1";
@@ -605,12 +617,12 @@ namespace Sequencer.Forms
             // 
             // SponsorPanel
             // 
-            this.SponsorPanel.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.SponsorPanel.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.SponsorPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.SponsorPanel.Controls.Add(this.lblClose);
             this.SponsorPanel.Controls.Add(this.label6);
             this.SponsorPanel.Controls.Add(this.lnkTop5k);
-            this.SponsorPanel.Location = new System.Drawing.Point(16, 47);
+            this.SponsorPanel.Location = new System.Drawing.Point(143, 148);
             this.SponsorPanel.Name = "SponsorPanel";
             this.SponsorPanel.Size = new System.Drawing.Size(234, 110);
             this.SponsorPanel.TabIndex = 9;
@@ -652,7 +664,7 @@ namespace Sequencer.Forms
             // 
             // substitutionList1
             // 
-            this.substitutionList1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.substitutionList1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.substitutionList1.Location = new System.Drawing.Point(272, 30);
             this.substitutionList1.Name = "substitutionList1";
@@ -674,7 +686,7 @@ namespace Sequencer.Forms
             // 
             // txtCharacterList
             // 
-            this.txtCharacterList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.txtCharacterList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCharacterList.Location = new System.Drawing.Point(8, 195);
             this.txtCharacterList.Multiline = true;
@@ -686,8 +698,8 @@ namespace Sequencer.Forms
             // 
             // txtWordList
             // 
-            this.txtWordList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtWordList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWordList.Location = new System.Drawing.Point(8, 30);
             this.txtWordList.Multiline = true;
@@ -754,8 +766,8 @@ namespace Sequencer.Forms
             // 
             // listPreviews
             // 
-            this.listPreviews.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.listPreviews.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listPreviews.Location = new System.Drawing.Point(194, 28);
             this.listPreviews.Name = "listPreviews";
@@ -779,7 +791,7 @@ namespace Sequencer.Forms
             // 
             // lvSequence
             // 
-            this.lvSequence.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.lvSequence.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.lvSequence.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lvSequence.FullRowSelect = true;
@@ -794,6 +806,7 @@ namespace Sequencer.Forms
             this.lvSequence.UseCompatibleStateImageBehavior = false;
             this.lvSequence.View = System.Windows.Forms.View.List;
             this.lvSequence.SelectedIndexChanged += new System.EventHandler(this.lvSequence_SelectedIndexChanged);
+            this.lvSequence.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvSequence_MouseDoubleClick);
             // 
             // toolStrip1
             // 
@@ -891,7 +904,7 @@ namespace Sequencer.Forms
             this.tsbOptions.Name = "tsbOptions";
             this.tsbOptions.Size = new System.Drawing.Size(29, 22);
             this.tsbOptions.Text = "Options";
-            this.tsbOptions.ToolTipText = "Sequence item\'s options";
+            this.tsbOptions.ToolTipText = "Configure Item";
             // 
             // probabilityToolStripMenuItem
             // 
@@ -950,6 +963,7 @@ namespace Sequencer.Forms
             this.tsbUp.Name = "tsbUp";
             this.tsbUp.Size = new System.Drawing.Size(23, 22);
             this.tsbUp.Text = "Move Up";
+            this.tsbUp.ToolTipText = "Move Item Up";
             this.tsbUp.Click += new System.EventHandler(this.tsbUp_Click);
             // 
             // tsbDown
@@ -960,6 +974,7 @@ namespace Sequencer.Forms
             this.tsbDown.Name = "tsbDown";
             this.tsbDown.Size = new System.Drawing.Size(23, 22);
             this.tsbDown.Text = "Move Down";
+            this.tsbDown.ToolTipText = "Move Item Down";
             this.tsbDown.Click += new System.EventHandler(this.tsbDown_Click);
             // 
             // menuStrip1
@@ -991,7 +1006,9 @@ namespace Sequencer.Forms
             this.dicewareToolStripMenuItem,
             this.bealeDicewareToolStripMenuItem,
             this.newGeneralServiceListToolStripMenuItem,
-            this.top5000ToolStripMenuItem});
+            this.top5000ToolStripMenuItem,
+            this.toolStripSeparator3,
+            this.fromFileToolStripMenuItem});
             this.defaultWordsToolStripMenuItem.Name = "defaultWordsToolStripMenuItem";
             this.defaultWordsToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.defaultWordsToolStripMenuItem.Text = "Default Words";
@@ -1023,6 +1040,19 @@ namespace Sequencer.Forms
             this.top5000ToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.top5000ToolStripMenuItem.Text = "Top 5000 English words";
             this.top5000ToolStripMenuItem.Click += new System.EventHandler(this.top5000ToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(199, 6);
+            // 
+            // fromFileToolStripMenuItem
+            // 
+            this.fromFileToolStripMenuItem.Name = "fromFileToolStripMenuItem";
+            this.fromFileToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.fromFileToolStripMenuItem.Text = "From file...";
+            this.fromFileToolStripMenuItem.ToolTipText = "Add words from a text file of your choice";
+            this.fromFileToolStripMenuItem.Click += new System.EventHandler(this.fromFileToolStripMenuItem_Click);
             // 
             // defaultCharactersToolStripMenuItem
             // 
@@ -1091,7 +1121,7 @@ namespace Sequencer.Forms
             // 
             // MainForm
             // 
-            this.ClientSize = new System.Drawing.Size(509, 463);
+            this.ClientSize = new System.Drawing.Size(509, 464);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.splitContainer1);
             this.MinimizeBox = false;
@@ -1223,7 +1253,47 @@ namespace Sequencer.Forms
         {
             AppendWordList(global::Sequencer.Properties.Resources.top5k);
             if (!lnkTop5k.LinkVisited)
-                SponsorPanel.Visible = true;
+            {
+                ShowAttribution();
+            }
+        }
+
+        private void fromFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.Filter = "Text files (*.txt)|*.txt|All files|*";
+            fileDialog.Title = "Get all words from file";
+
+            if (fileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string allWords = System.IO.File.ReadAllText(fileDialog.FileName).ToLower();
+
+                char[] nonWordChars = { ' ', '\r', '\n', '\t', '.', '!', '?', ',', ':', ';', '"', '(', ')', '<', '>', '=', '/', '\\' };
+                string[] newWords = allWords.Split(nonWordChars, StringSplitOptions.RemoveEmptyEntries);
+
+                if (newWords.Length > 0)
+                {
+                    System.Array.Sort(newWords);
+                    newWords = newWords.Distinct().ToArray();
+
+                    AppendWordList(System.String.Join(" ", newWords));
+                }
+            }
+        }
+
+        public void ShowAttribution()
+        {
+            SponsorPanel.Visible = true;
+        }
+
+        public bool AttributionWasViewed()
+        {
+            return lnkTop5k.LinkVisited;
+        }
+
+        public void SetAttributionViewed()
+        {
+            lnkTop5k.LinkVisited = true;
         }
 
         private void lblClose_Click(object sender, EventArgs e)
@@ -1233,7 +1303,7 @@ namespace Sequencer.Forms
 
         private void lnkTop5k_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            lnkTop5k.LinkVisited = true;
+            SetAttributionViewed();
             System.Diagnostics.Process.Start("http://www.wordfrequency.info/");
         }
 
@@ -1283,5 +1353,22 @@ namespace Sequencer.Forms
             lengthStrengthToolStripMenuItem.Visible = !isWordItem && advancedModeToolStripMenuItem.Checked;
         }
 
+        private void RefitTextEntry()
+        {
+            while (txtWordList.MaxLength <= txtWordList.Text.Length)
+            {
+                txtWordList.MaxLength = txtWordList.MaxLength * 3 / 2;
+            }
+
+            while (txtCharacterList.MaxLength <= txtCharacterList.Text.Length)
+            {
+                txtCharacterList.MaxLength = txtCharacterList.MaxLength * 3 / 2;
+            }
+        }
+
+        private void lvSequence_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            tsbEdit_Click(sender, e);
+        }
     }
 }
