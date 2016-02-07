@@ -172,12 +172,6 @@ namespace Sequencer.Forms
 
                 listItem.Tag = sequenceItem;
 
-                for (int i = 1; i <= 3; i += 1)
-                {
-                    listItem.SubItems.Add(sequencer.GenerateSequenceItem(sequenceItem,
-                                                    Configuration, randomizer));
-                }
-
                 string itemText = "";
 
                 if (sequenceItem is CharacterSequenceItem)
@@ -586,8 +580,8 @@ namespace Sequencer.Forms
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.Location = new System.Drawing.Point(0, 12);
             this.splitContainer1.Name = "splitContainer1";
@@ -664,7 +658,7 @@ namespace Sequencer.Forms
             // 
             // substitutionList1
             // 
-            this.substitutionList1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.substitutionList1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.substitutionList1.Location = new System.Drawing.Point(272, 30);
             this.substitutionList1.Name = "substitutionList1";
@@ -686,7 +680,7 @@ namespace Sequencer.Forms
             // 
             // txtCharacterList
             // 
-            this.txtCharacterList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtCharacterList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCharacterList.Location = new System.Drawing.Point(8, 195);
             this.txtCharacterList.Multiline = true;
@@ -698,8 +692,8 @@ namespace Sequencer.Forms
             // 
             // txtWordList
             // 
-            this.txtWordList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtWordList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWordList.Location = new System.Drawing.Point(8, 30);
             this.txtWordList.Multiline = true;
@@ -766,8 +760,8 @@ namespace Sequencer.Forms
             // 
             // listPreviews
             // 
-            this.listPreviews.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.listPreviews.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listPreviews.Location = new System.Drawing.Point(194, 28);
             this.listPreviews.Name = "listPreviews";
@@ -778,7 +772,7 @@ namespace Sequencer.Forms
             // 
             // strengthBar
             // 
-            this.strengthBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.strengthBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.strengthBar.Location = new System.Drawing.Point(194, 150);
             this.strengthBar.MarqueeAnimationSpeed = 1000;
@@ -791,7 +785,7 @@ namespace Sequencer.Forms
             // 
             // lvSequence
             // 
-            this.lvSequence.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.lvSequence.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)));
             this.lvSequence.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lvSequence.FullRowSelect = true;
@@ -1311,10 +1305,29 @@ namespace Sequencer.Forms
         {
             loadToolStripMenuItem.DropDownItems.Clear();
 
-            foreach (string config in new PasswordSequenceConfigurationFactory().ListConfigurationFiles())
+            var factory = new PasswordSequenceConfigurationFactory();
+            foreach (string config in factory.ListConfigurationFiles())
             {
+                try
+                {
+                    ToolStripItem configItem = new ToolStripMenuItem();
+                    configItem.Tag = config;
+                    PasswordSequenceConfiguration psconfig = factory.LoadFromFile(config);
+                    if (psconfig == null)
+                        continue;
+                    if (!string.IsNullOrEmpty(psconfig.Name))
+                        configItem.Text = psconfig.Name;
+                    else
+                        configItem.Text = "<Default>";
 
-                loadToolStripMenuItem.DropDownItems.Add(config).Click += LoadFoundTemplate;
+                    configItem.Click += LoadFoundTemplate;
+
+                    loadToolStripMenuItem.DropDownItems.Add(configItem);
+                }
+                catch
+                {
+
+                }
             }
         }
 
@@ -1323,7 +1336,7 @@ namespace Sequencer.Forms
             ToolStripItem item = sender as ToolStripItem;
             if (item != null)
             {
-                Configuration = new PasswordSequenceConfigurationFactory().LoadFromFile(item.Text);
+                Configuration = new PasswordSequenceConfigurationFactory().LoadFromFile(item.Tag.ToString());
                 UpdateWindowTitle();
                 LoadConfigurationDetails(true);
             }
