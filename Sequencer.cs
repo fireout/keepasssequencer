@@ -31,6 +31,13 @@ namespace Sequencer
 
         public void Save(PasswordSequenceConfiguration configuration)
         {
+            if (Sequencer.GetAdvancedOptionRequired(configuration) && Sequencer.AdvancedOptionsDialog("Configuring password sequence using the advanced mode can result in the password being weaker that what is displaied by the strength bar. " +
+                "Click Ok if you want to save the sequence anyway.") == System.Windows.Forms.DialogResult.Cancel)
+            {
+                return;
+            }
+
+
             /* pass "true" to GetConfigurationPath to default to the user config
              * even when it doesn't exist yet; we'll create it here
              */
@@ -256,14 +263,37 @@ namespace Sequencer
             return substitutedWord;
         }
 
+        internal static bool GetAdvancedOptionRequired(PasswordSequenceConfiguration configuration)
+        {
+            bool usesAdvancedOptions = false;
+            foreach (SequenceItem item in configuration.Sequence)
+            {
+                WordSequenceItem word = item as WordSequenceItem;
+                if (word != null)
+                {
+                    usesAdvancedOptions = word.Probability < PercentEnum.Always;
+                }
+                CharacterSequenceItem characters = item as CharacterSequenceItem;
+                if (characters != null)
+                {
+                    usesAdvancedOptions = characters.Probability < PercentEnum.Always || characters.LengthStrength < StrengthEnum.Full;
+                }
+                if (usesAdvancedOptions)
+                    break;
+            }
+            return usesAdvancedOptions;
+        }
+
         public override ProtectedString Generate(PwProfile prf, CryptoRandomStream crsRandomSource)
         {
-            return new ProtectedString(true, GenerateSequence(Load(prf.CustomAlgorithmOptions), new CryptoRandomRange(crsRandomSource)));
+            PasswordSequenceConfiguration config = Load(prf.CustomAlgorithmOptions);
+
+            return new ProtectedString(true, GenerateSequence(config, new CryptoRandomRange(crsRandomSource)));
         }
 
         public override string GetOptions(string strCurrentOptions)
         {
-            MainForm form = new MainForm();
+            advancedOptionsEnabled = null;
             PasswordSequenceConfiguration configuration = new Sequencer().Load(strCurrentOptions);
             if (configuration == null)
             {
@@ -275,8 +305,16 @@ namespace Sequencer
                                  "Error Reading Configuration",
                                  MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            form.Configuration = configuration ?? new PasswordSequenceConfiguration(true);
+
+            MainForm form = new MainForm(configuration ?? new PasswordSequenceConfiguration(true));
             form.ShowDialog();
+
+            // this reset the need for a dialog
+            if ((advancedOptionsRequired = GetAdvancedOptionRequired(form.Configuration)) != false)
+            {
+                advancedOptionsEnabled = null;
+            }
+
             return form.Configuration.Name;
         }
 
@@ -300,6 +338,14 @@ namespace Sequencer
         public override string Name
         {
             get { return "Sequencer"; }
+        }
+
+        internal static bool? advancedOptionsEnabled = null;
+        static bool? advancedOptionsRequired = null;
+        internal static DialogResult AdvancedOptionsDialog(string warningMessage)
+        {
+            return MessageBox.Show(warningMessage,
+                "Advanced Mode Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
         }
     }
 }
