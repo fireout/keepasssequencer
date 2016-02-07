@@ -31,6 +31,13 @@ namespace Sequencer
 
         public void Save(PasswordSequenceConfiguration configuration)
         {
+            if (Sequencer.GetAdvancedOptionRequired(configuration) && Sequencer.AdvancedOptionsDialog("Configuring password sequence using the advanced mode can result in the password being weaker that what is displaied by the strength bar. " +
+                "Click Ok if you want to save the sequence anyway.") == System.Windows.Forms.DialogResult.Cancel)
+            {
+                return;
+            }
+
+
             /* pass "true" to GetConfigurationPath to default to the user config
              * even when it doesn't exist yet; we'll create it here
              */
@@ -280,16 +287,7 @@ namespace Sequencer
         public override ProtectedString Generate(PwProfile prf, CryptoRandomStream crsRandomSource)
         {
             PasswordSequenceConfiguration config = Load(prf.CustomAlgorithmOptions);
-            if (advancedOptionsRequired == null)
-            {
-                advancedOptionsRequired = GetAdvancedOptionRequired(config);
-            }
-            if (advancedOptionsRequired.Value && (advancedOptionsEnabled != (bool?)true))
-            {
-                advancedOptionsEnabled = AdvancedOptionsDialog("Advanced mode is activated, generated password may end up being weak") == DialogResult.OK;
-            }
-            if (advancedOptionsRequired.Value && !advancedOptionsEnabled.Value)
-                return new ProtectedString(true, string.Empty);
+
             return new ProtectedString(true, GenerateSequence(config, new CryptoRandomRange(crsRandomSource)));
         }
 
