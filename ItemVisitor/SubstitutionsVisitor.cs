@@ -21,7 +21,7 @@ namespace Sequencer.ItemVisitor
                 if (item.Substitutions == null || !item.Substitutions.Override)
                     applicableSubstitution.AddRange(_globalConfiguration.DefaultSubstitutions);
                 foreach (BaseSubstitution substitution in applicableSubstitution)
-                    if (cryptoRandom.GetRandomInRange(0, 100) <= (ulong)item.Substitution)
+                    if (cryptoRandom.GetRandomInRange(1, 100) <= (ulong)item.Substitution)
                         word = new SubstitutionVisitor().ApplySubstitutionItem(substitution, word);
             }
             return word;
