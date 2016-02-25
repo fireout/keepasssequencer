@@ -427,6 +427,31 @@ namespace Sequencer.Forms
             }
         }
 
+        private void tsbOptions_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SequenceItem item = GetSelectedSequenceItem<SequenceItem>();
+                WordSequenceItem wordItem = item as WordSequenceItem;
+                if (wordItem != null)
+                {
+                    includeDefaultsToolStripMenuItem.Checked = !wordItem.Words.Override;
+                }
+                else
+                {
+                    CharacterSequenceItem charItem = item as CharacterSequenceItem;
+                    if (charItem != null)
+                    {
+                        includeDefaultsToolStripMenuItem.Checked = !charItem.Characters.Override;
+                    }
+                }
+            }
+            catch (NullReferenceException)
+            {
+                includeDefaultsToolStripMenuItem.Checked = false;
+            }
+        }
+
         private void probabilityToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ReadUserInputFor<SequenceItem, PercentEnum>("Probability [Never|Always|1-99]", "[Never|Always|1-99]", i => i.Probability);
@@ -456,8 +481,23 @@ namespace Sequencer.Forms
         {
             try
             {
-                ReadUserInputFor<CharacterSequenceItem, bool>("Omit default characters [true|false]", "[true|false]", i => i.Characters.Override);
-                ReadUserInputFor<WordSequenceItem, bool>("Omit default words [true|false]", "[true|false]", i => i.Words.Override);
+                SequenceItem item = GetSelectedSequenceItem<SequenceItem>();
+                WordSequenceItem wordItem = item as WordSequenceItem;
+                if (wordItem != null)
+                {
+                    wordItem.Words.Override = !wordItem.Words.Override;
+                    includeDefaultsToolStripMenuItem.Checked = !wordItem.Words.Override;
+                }
+                else
+                {
+                    CharacterSequenceItem charItem = item as CharacterSequenceItem;
+                    if (charItem != null)
+                    {
+                        charItem.Characters.Override = !charItem.Characters.Override;
+                        includeDefaultsToolStripMenuItem.Checked = !charItem.Characters.Override;
+                    }
+                }
+                LoadConfigurationDetails();
             }
             catch (NullReferenceException)
             {
@@ -580,8 +620,8 @@ namespace Sequencer.Forms
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.Location = new System.Drawing.Point(0, 12);
             this.splitContainer1.Name = "splitContainer1";
@@ -658,7 +698,7 @@ namespace Sequencer.Forms
             // 
             // substitutionList1
             // 
-            this.substitutionList1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.substitutionList1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.substitutionList1.Location = new System.Drawing.Point(272, 30);
             this.substitutionList1.Name = "substitutionList1";
@@ -680,7 +720,7 @@ namespace Sequencer.Forms
             // 
             // txtCharacterList
             // 
-            this.txtCharacterList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.txtCharacterList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCharacterList.Location = new System.Drawing.Point(8, 195);
             this.txtCharacterList.Multiline = true;
@@ -692,8 +732,8 @@ namespace Sequencer.Forms
             // 
             // txtWordList
             // 
-            this.txtWordList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtWordList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWordList.Location = new System.Drawing.Point(8, 30);
             this.txtWordList.Multiline = true;
@@ -760,8 +800,8 @@ namespace Sequencer.Forms
             // 
             // listPreviews
             // 
-            this.listPreviews.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.listPreviews.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listPreviews.Location = new System.Drawing.Point(194, 28);
             this.listPreviews.Name = "listPreviews";
@@ -772,7 +812,7 @@ namespace Sequencer.Forms
             // 
             // strengthBar
             // 
-            this.strengthBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.strengthBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.strengthBar.Location = new System.Drawing.Point(194, 150);
             this.strengthBar.MarqueeAnimationSpeed = 1000;
@@ -785,7 +825,7 @@ namespace Sequencer.Forms
             // 
             // lvSequence
             // 
-            this.lvSequence.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.lvSequence.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.lvSequence.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lvSequence.FullRowSelect = true;
@@ -899,6 +939,7 @@ namespace Sequencer.Forms
             this.tsbOptions.Size = new System.Drawing.Size(29, 22);
             this.tsbOptions.Text = "Options";
             this.tsbOptions.ToolTipText = "Configure Item";
+            this.tsbOptions.Click += new System.EventHandler(this.tsbOptions_Click);
             // 
             // probabilityToolStripMenuItem
             // 
