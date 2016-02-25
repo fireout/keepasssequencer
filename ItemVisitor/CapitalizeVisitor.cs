@@ -19,7 +19,7 @@ namespace Sequencer.ItemVisitor
             {
                 string capitalizedWord = string.Empty;
                 foreach (char c in word)
-                    if ((int)cryptoRandom.GetRandomInRange(0, 101) <= (int)item.Capitalize)
+                    if ((int)cryptoRandom.GetRandomInRange(1, 100) <= (int)item.Capitalize)
                         capitalizedWord += c.ToString(CultureInfo.InvariantCulture).ToUpper();
                     else
                         capitalizedWord += c.ToString(CultureInfo.InvariantCulture).ToLower();
