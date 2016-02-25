@@ -52,7 +52,7 @@ namespace Sequencer.Configuration.Model
                 avg_word_len += word.Length;
                 foreach (BaseSubstitution substitution in applicableSubstitution)
                 {
-                    subst_hit_count += new SubstitutionVisitor()
+                    subst_hit_count += new SubstitutionVisitor(null)
                                             .CountSubstitution(substitution, word);
                 }
             }

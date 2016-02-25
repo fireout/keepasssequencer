@@ -8,18 +8,22 @@ namespace Sequencer.ItemVisitor
 {
     class SubstitutionVisitor : ISubstitutionVisitor<BaseSubstitution>
     {
+        public SubstitutionVisitor(CryptoRandomRange cryptoRandom) 
+        {
+            myCryptoRandom = cryptoRandom;
+        }
 
-        public string ApplySubstitutionItem(BaseSubstitution substitution, string word)
+        public string ApplySubstitutionItem(BaseSubstitution substitution, string word, ulong substChance)
         {
             var anySubstitution = substitution as AnySubstitution;
             if (anySubstitution != null)
             {
-                return new AnySubstitutionVisitor().ApplySubstitutionItem(anySubstitution, word);
+                return new AnySubstitutionVisitor(myCryptoRandom).ApplySubstitutionItem(anySubstitution, word, substChance);
             }
             var wholeSubstitution = substitution as WholeSubstitution;
             if (wholeSubstitution != null)
             {
-                return new WholeSubstitutionVisitor().ApplySubstitutionItem(wholeSubstitution, word);
+                return new WholeSubstitutionVisitor(myCryptoRandom).ApplySubstitutionItem(wholeSubstitution, word, substChance);
             }
             return word;
         }
@@ -29,14 +33,16 @@ namespace Sequencer.ItemVisitor
             var anySubstitution = substitution as AnySubstitution;
             if (anySubstitution != null)
             {
-                return new AnySubstitutionVisitor().CountSubstitution(anySubstitution, word);
+                return new AnySubstitutionVisitor(myCryptoRandom).CountSubstitution(anySubstitution, word);
             }
             var wholeSubstitution = substitution as WholeSubstitution;
             if (wholeSubstitution != null)
             {
-                return new WholeSubstitutionVisitor().CountSubstitution(wholeSubstitution, word);
+                return new WholeSubstitutionVisitor(myCryptoRandom).CountSubstitution(wholeSubstitution, word);
             }
             return 0;
         }
+
+        private CryptoRandomRange myCryptoRandom;
     }
 }
