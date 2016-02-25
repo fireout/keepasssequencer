@@ -6,15 +6,20 @@ namespace Sequencer.ItemVisitor
 {
     class AnySubstitutionVisitor : ISubstitutionVisitor<AnySubstitution>
     {
-        public string ApplySubstitutionItem(AnySubstitution substitution, string word)
+        public AnySubstitutionVisitor(CryptoRandomRange cryptoRandom) 
         {
-            return ForEachSubstitution(substitution, word, (f, r) => f + r);
+            myCryptoRandom = cryptoRandom;
+        }
+
+        public string ApplySubstitutionItem(AnySubstitution substitution, string word, ulong substChance)
+        {
+            return ForEachSubstitution(substitution, word, substChance, (f, r) => f + r);
         }
 
         public int CountSubstitution(AnySubstitution substitution, string word)
         {
             int count = 0;
-            ForEachSubstitution(substitution, word, (f, r) =>
+            ForEachSubstitution(substitution, word, 100, (f, r) =>
             {
                 count++;
                 return f;
@@ -22,7 +27,10 @@ namespace Sequencer.ItemVisitor
             return count;
         }
 
-        private string ForEachSubstitution(AnySubstitution substitution, string word, Func<string, string, string> operation)
+        private string ForEachSubstitution(AnySubstitution substitution,
+                                           string word,
+                                           ulong substChance,
+                                           Func<string, string, string> operation)
         {
             string substitutedWord = string.Empty;
             string replacePattern = substitution.Replace;
@@ -34,7 +42,8 @@ namespace Sequencer.ItemVisitor
 
             for (int i = 0; i < word.Length; i++)
             {
-                if (replacePattern.Contains(cursorWord[i].ToString(CultureInfo.InvariantCulture)))
+                if (replacePattern.Contains(cursorWord[i].ToString(CultureInfo.InvariantCulture)) &&
+                        (substChance >= 100 || myCryptoRandom.GetRandomInRange(1, 100) <= substChance) )
                 {
                     substitutedWord = operation(substitutedWord, substitution.With);
                 }
@@ -44,7 +53,8 @@ namespace Sequencer.ItemVisitor
                 }
             }
             return substitutedWord;
-
         }
+
+        private CryptoRandomRange myCryptoRandom;
     }
 }
