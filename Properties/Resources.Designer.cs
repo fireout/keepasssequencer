@@ -61,7 +61,7 @@ namespace Sequencer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to a a&apos;s a-1 a-z aa aaa aaaa aaron ab aback abacus abase abash abate abbey abbot abbr abby abc abc&apos;s abcd abduct abdul abe abed abel abet abhor abide ablaze able abm abner aboard abode abort about above abram absent absorb abuse abut abyss ac ac/dc accept accuse ace aces ache ached aches achoo achy acid acidic acids acme acne acorn acquit acre acres acrid act acted actor acts acute ad ada adage adagio adair adam adams adapt add added adder addict addle adds adele adept adieu adios adjust adler admit ado adobe  [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string from beale Diceware list
         /// </summary>
         internal static string bealeDiceware {
             get {
@@ -80,7 +80,7 @@ namespace Sequencer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to a a&amp;p a&apos;s aa aaa aaaa aaron ab aba ababa aback abase abash abate abbas abbe abbey abbot abbott abc abe abed abel abet abide abject ablaze able abner abo abode abort about above abrade abram absorb abuse abut abyss ac acadia accra accrue ace acetic ache acid acidic acm acme acorn acre acrid act acton actor acts acuity acute ad ada adage adagio adair adam adams adapt add added addict addis addle adele aden adept adieu adjust adler admit admix ado adobe adonis adopt adore adorn adult advent advert advise ae ae [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string from standard diceware list
         /// </summary>
         internal static string diceware {
             get {
@@ -119,11 +119,20 @@ namespace Sequencer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to a abandon abandoned abandoning abandons abilities ability able abler ablest about above abroad absence absences absolutely abuse abused abuses abusing academic academics accept accepted accepting accepts access accessed accesses accessing accident accidents accommodation accommodations accompanied accompanies accompany accompanying accord accorded according accords account accounted accounting accounts accuse accused accuses accusing achieve achieved achievement achievements achieves achieving acknowledge a [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string from full NGSL wordlist
         /// </summary>
         internal static string ngsl {
             get {
                 return ResourceManager.GetString("ngsl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string from full NGSL headwords list
+        /// </summary>
+        internal static string ngsl_headwords {
+            get {
+                return ResourceManager.GetString("ngsl_headwords", resourceCulture);
             }
         }
         
@@ -138,7 +147,7 @@ namespace Sequencer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to a abandon ability able abortion about about above above abroad absence absolute absolutely absorb abstract abuse abuse academic accelerate accent accept acceptable acceptance access access accessible accident accommodate accompany accomplish accomplishment according account account accountability accounting accuracy accurate accurately accusation accuse achieve achievement acid acknowledge acquire acquisition across across act act action active actively activist activity actor actress actual actually ad ada [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string from the top 5000 English words list
         /// </summary>
         internal static string top5k {
             get {

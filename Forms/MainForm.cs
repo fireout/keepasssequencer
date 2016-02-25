@@ -70,6 +70,7 @@ namespace Sequencer.Forms
         private ToolStripMenuItem fromFileToolStripMenuItem;
         private ToolStripMenuItem optionsToolStripMenuItem;
         internal ToolStripMenuItem advancedModeToolStripMenuItem;
+        private ToolStripMenuItem newGeneralServiceListbaseWordsToolStripMenuItem;
 
         private System.Timers.Timer wordlistUpdateTimer;
         public delegate void LoadConfigDelegate(bool loadTextFields);
@@ -557,6 +558,7 @@ namespace Sequencer.Forms
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.advancedModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newGeneralServiceListbaseWordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             label5 = new System.Windows.Forms.Label();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -580,8 +582,8 @@ namespace Sequencer.Forms
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.Location = new System.Drawing.Point(0, 12);
             this.splitContainer1.Name = "splitContainer1";
@@ -658,7 +660,7 @@ namespace Sequencer.Forms
             // 
             // substitutionList1
             // 
-            this.substitutionList1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.substitutionList1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.substitutionList1.Location = new System.Drawing.Point(272, 30);
             this.substitutionList1.Name = "substitutionList1";
@@ -680,7 +682,7 @@ namespace Sequencer.Forms
             // 
             // txtCharacterList
             // 
-            this.txtCharacterList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.txtCharacterList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCharacterList.Location = new System.Drawing.Point(8, 195);
             this.txtCharacterList.Multiline = true;
@@ -692,8 +694,8 @@ namespace Sequencer.Forms
             // 
             // txtWordList
             // 
-            this.txtWordList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.txtWordList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWordList.Location = new System.Drawing.Point(8, 30);
             this.txtWordList.Multiline = true;
@@ -760,8 +762,8 @@ namespace Sequencer.Forms
             // 
             // listPreviews
             // 
-            this.listPreviews.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.listPreviews.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listPreviews.Location = new System.Drawing.Point(194, 28);
             this.listPreviews.Name = "listPreviews";
@@ -772,7 +774,7 @@ namespace Sequencer.Forms
             // 
             // strengthBar
             // 
-            this.strengthBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.strengthBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.strengthBar.Location = new System.Drawing.Point(194, 150);
             this.strengthBar.MarqueeAnimationSpeed = 1000;
@@ -785,7 +787,7 @@ namespace Sequencer.Forms
             // 
             // lvSequence
             // 
-            this.lvSequence.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.lvSequence.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.lvSequence.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lvSequence.FullRowSelect = true;
@@ -999,6 +1001,7 @@ namespace Sequencer.Forms
             this.defaultWordsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.dicewareToolStripMenuItem,
             this.bealeDicewareToolStripMenuItem,
+            this.newGeneralServiceListbaseWordsToolStripMenuItem,
             this.newGeneralServiceListToolStripMenuItem,
             this.top5000ToolStripMenuItem,
             this.toolStripSeparator3,
@@ -1010,40 +1013,40 @@ namespace Sequencer.Forms
             // dicewareToolStripMenuItem
             // 
             this.dicewareToolStripMenuItem.Name = "dicewareToolStripMenuItem";
-            this.dicewareToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.dicewareToolStripMenuItem.Size = new System.Drawing.Size(298, 22);
             this.dicewareToolStripMenuItem.Text = "Diceware";
             this.dicewareToolStripMenuItem.Click += new System.EventHandler(this.dicewareToolStripMenuItem_Click);
             // 
             // bealeDicewareToolStripMenuItem
             // 
             this.bealeDicewareToolStripMenuItem.Name = "bealeDicewareToolStripMenuItem";
-            this.bealeDicewareToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.bealeDicewareToolStripMenuItem.Size = new System.Drawing.Size(298, 22);
             this.bealeDicewareToolStripMenuItem.Text = "Beale Diceware";
             this.bealeDicewareToolStripMenuItem.Click += new System.EventHandler(this.bealeDicewareToolStripMenuItem_Click);
             // 
             // newGeneralServiceListToolStripMenuItem
             // 
             this.newGeneralServiceListToolStripMenuItem.Name = "newGeneralServiceListToolStripMenuItem";
-            this.newGeneralServiceListToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
-            this.newGeneralServiceListToolStripMenuItem.Text = "New General Service List";
+            this.newGeneralServiceListToolStripMenuItem.Size = new System.Drawing.Size(298, 22);
+            this.newGeneralServiceListToolStripMenuItem.Text = "New General Service List (all word forms)";
             this.newGeneralServiceListToolStripMenuItem.Click += new System.EventHandler(this.newGeneralServiceListToolStripMenuItem_Click);
             // 
             // top5000ToolStripMenuItem
             // 
             this.top5000ToolStripMenuItem.Name = "top5000ToolStripMenuItem";
-            this.top5000ToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.top5000ToolStripMenuItem.Size = new System.Drawing.Size(298, 22);
             this.top5000ToolStripMenuItem.Text = "Top 5000 English words";
             this.top5000ToolStripMenuItem.Click += new System.EventHandler(this.top5000ToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(199, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(295, 6);
             // 
             // fromFileToolStripMenuItem
             // 
             this.fromFileToolStripMenuItem.Name = "fromFileToolStripMenuItem";
-            this.fromFileToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.fromFileToolStripMenuItem.Size = new System.Drawing.Size(298, 22);
             this.fromFileToolStripMenuItem.Text = "From file...";
             this.fromFileToolStripMenuItem.ToolTipText = "Add words from a text file of your choice";
             this.fromFileToolStripMenuItem.Click += new System.EventHandler(this.fromFileToolStripMenuItem_Click);
@@ -1112,6 +1115,13 @@ namespace Sequencer.Forms
             this.advancedModeToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
             this.advancedModeToolStripMenuItem.Text = "Advanced Mode";
             this.advancedModeToolStripMenuItem.Click += new System.EventHandler(this.advancedModeToolStripMenuItem_Click);
+            // 
+            // newGeneralServiceListbaseWordsToolStripMenuItem
+            // 
+            this.newGeneralServiceListbaseWordsToolStripMenuItem.Name = "newGeneralServiceListbaseWordsToolStripMenuItem";
+            this.newGeneralServiceListbaseWordsToolStripMenuItem.Size = new System.Drawing.Size(298, 22);
+            this.newGeneralServiceListbaseWordsToolStripMenuItem.Text = "New General Service List (base words only)";
+            this.newGeneralServiceListbaseWordsToolStripMenuItem.Click += new System.EventHandler(this.newGeneralServiceListbaseWordsToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -1241,6 +1251,11 @@ namespace Sequencer.Forms
         private void newGeneralServiceListToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AppendWordList(global::Sequencer.Properties.Resources.ngsl);
+        }
+
+        private void newGeneralServiceListbaseWordsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AppendWordList(global::Sequencer.Properties.Resources.ngsl_headwords);
         }
 
         private void top5000ToolStripMenuItem_Click(object sender, EventArgs e)

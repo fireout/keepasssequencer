@@ -53,6 +53,12 @@ namespace Sequencer.Forms
             RefitTextEntry();
         }
 
+        private void addNgslBaseOnly_Click(object sender, EventArgs e)
+        {
+            wordList.SelectedText = global::Sequencer.Properties.Resources.ngsl_headwords;
+            RefitTextEntry();
+        }
+
         private void addTop5kButton_Click(object sender, EventArgs e)
         {
             wordList.SelectedText = global::Sequencer.Properties.Resources.top5k;
