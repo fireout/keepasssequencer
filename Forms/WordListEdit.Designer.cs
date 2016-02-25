@@ -33,6 +33,7 @@
             this.addWordsMenu = new System.Windows.Forms.ToolStripDropDownButton();
             this.addDicewareButton = new System.Windows.Forms.ToolStripMenuItem();
             this.addAltDicewareButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.addNgslBaseOnly = new System.Windows.Forms.ToolStripMenuItem();
             this.addNgslButton = new System.Windows.Forms.ToolStripMenuItem();
             this.addTop5kButton = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -71,6 +72,7 @@
             this.addWordsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addDicewareButton,
             this.addAltDicewareButton,
+            this.addNgslBaseOnly,
             this.addNgslButton,
             this.addTop5kButton,
             this.toolStripSeparator1,
@@ -84,40 +86,47 @@
             // addDicewareButton
             // 
             this.addDicewareButton.Name = "addDicewareButton";
-            this.addDicewareButton.Size = new System.Drawing.Size(202, 22);
+            this.addDicewareButton.Size = new System.Drawing.Size(298, 22);
             this.addDicewareButton.Text = "Diceware";
             this.addDicewareButton.Click += new System.EventHandler(this.addDicewareButton_Click);
             // 
             // addAltDicewareButton
             // 
             this.addAltDicewareButton.Name = "addAltDicewareButton";
-            this.addAltDicewareButton.Size = new System.Drawing.Size(202, 22);
+            this.addAltDicewareButton.Size = new System.Drawing.Size(298, 22);
             this.addAltDicewareButton.Text = "Beale Diceware";
             this.addAltDicewareButton.Click += new System.EventHandler(this.addAltDicewareButton_Click);
+            // 
+            // addNgslBaseOnly
+            // 
+            this.addNgslBaseOnly.Name = "addNgslBaseOnly";
+            this.addNgslBaseOnly.Size = new System.Drawing.Size(298, 22);
+            this.addNgslBaseOnly.Text = "New General Service List (base words only)";
+            this.addNgslBaseOnly.Click += new System.EventHandler(this.addNgslBaseOnly_Click);
             // 
             // addNgslButton
             // 
             this.addNgslButton.Name = "addNgslButton";
-            this.addNgslButton.Size = new System.Drawing.Size(202, 22);
-            this.addNgslButton.Text = "New General Service List";
+            this.addNgslButton.Size = new System.Drawing.Size(298, 22);
+            this.addNgslButton.Text = "New General Service List (all word forms)";
             this.addNgslButton.Click += new System.EventHandler(this.addNgslButton_Click);
             // 
             // addTop5kButton
             // 
             this.addTop5kButton.Name = "addTop5kButton";
-            this.addTop5kButton.Size = new System.Drawing.Size(202, 22);
+            this.addTop5kButton.Size = new System.Drawing.Size(298, 22);
             this.addTop5kButton.Text = "Top 5000 English Words";
             this.addTop5kButton.Click += new System.EventHandler(this.addTop5kButton_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(199, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(295, 6);
             // 
             // addTxtFileButton
             // 
             this.addTxtFileButton.Name = "addTxtFileButton";
-            this.addTxtFileButton.Size = new System.Drawing.Size(202, 22);
+            this.addTxtFileButton.Size = new System.Drawing.Size(298, 22);
             this.addTxtFileButton.Text = "From file...";
             this.addTxtFileButton.ToolTipText = "Add words from a text file of your choice";
             this.addTxtFileButton.Click += new System.EventHandler(this.addTxtFileButton_Click);
@@ -176,5 +185,6 @@
         private System.Windows.Forms.ToolStripMenuItem addTxtFileButton;
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.ToolStripMenuItem addNgslBaseOnly;
     }
 }
