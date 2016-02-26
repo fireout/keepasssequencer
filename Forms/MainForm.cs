@@ -428,6 +428,31 @@ namespace Sequencer.Forms
             }
         }
 
+        private void tsbOptions_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SequenceItem item = GetSelectedSequenceItem<SequenceItem>();
+                WordSequenceItem wordItem = item as WordSequenceItem;
+                if (wordItem != null)
+                {
+                    includeDefaultsToolStripMenuItem.Checked = !wordItem.Words.Override;
+                }
+                else
+                {
+                    CharacterSequenceItem charItem = item as CharacterSequenceItem;
+                    if (charItem != null)
+                    {
+                        includeDefaultsToolStripMenuItem.Checked = !charItem.Characters.Override;
+                    }
+                }
+            }
+            catch (NullReferenceException)
+            {
+                includeDefaultsToolStripMenuItem.Checked = false;
+            }
+        }
+
         private void probabilityToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ReadUserInputFor<SequenceItem, PercentEnum>("Probability [Never|Always|1-99]", "[Never|Always|1-99]", i => i.Probability);
@@ -457,8 +482,23 @@ namespace Sequencer.Forms
         {
             try
             {
-                ReadUserInputFor<CharacterSequenceItem, bool>("Omit default characters [true|false]", "[true|false]", i => i.Characters.Override);
-                ReadUserInputFor<WordSequenceItem, bool>("Omit default words [true|false]", "[true|false]", i => i.Words.Override);
+                SequenceItem item = GetSelectedSequenceItem<SequenceItem>();
+                WordSequenceItem wordItem = item as WordSequenceItem;
+                if (wordItem != null)
+                {
+                    wordItem.Words.Override = !wordItem.Words.Override;
+                    includeDefaultsToolStripMenuItem.Checked = !wordItem.Words.Override;
+                }
+                else
+                {
+                    CharacterSequenceItem charItem = item as CharacterSequenceItem;
+                    if (charItem != null)
+                    {
+                        charItem.Characters.Override = !charItem.Characters.Override;
+                        includeDefaultsToolStripMenuItem.Checked = !charItem.Characters.Override;
+                    }
+                }
+                LoadConfigurationDetails();
             }
             catch (NullReferenceException)
             {
@@ -901,6 +941,7 @@ namespace Sequencer.Forms
             this.tsbOptions.Size = new System.Drawing.Size(29, 22);
             this.tsbOptions.Text = "Options";
             this.tsbOptions.ToolTipText = "Configure Item";
+            this.tsbOptions.Click += new System.EventHandler(this.tsbOptions_Click);
             // 
             // probabilityToolStripMenuItem
             // 
