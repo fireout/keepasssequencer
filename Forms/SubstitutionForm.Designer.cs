@@ -154,6 +154,7 @@
             this.Name = "SubstitutionForm";
             this.ShowIcon = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "3";
             this.ResumeLayout(false);
             this.PerformLayout();
