@@ -1,3 +1,3 @@
 :
-Sequencer:0.1.0
+Sequencer:0.1.1
 :
