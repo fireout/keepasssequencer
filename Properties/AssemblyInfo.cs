@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Sequencer")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Keepass password generator, generates password base on a sequence of words or characters")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("quasiVirtuel")]
+[assembly: AssemblyCompany("Pascal Martin")]
 [assembly: AssemblyProduct("KeePass Plugin")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
