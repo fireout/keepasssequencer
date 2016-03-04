@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A459BE9A-CFAB-411D-84B8-79A8910B82E5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sequencer</RootNamespace>
+    <AssemblyName>Sequencer</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\debug\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="KeePass, Version=2.29.0.17893, Culture=neutral, PublicKeyToken=fed2ed7716aecf5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\KeePass.exe</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Configuration\Model\AnySubstitution.cs" />
+    <Compile Include="Configuration\PasswordSequenceConfigurationFactory.cs" />
+    <Compile Include="Configuration\Model\OverridingCustomSerializationBaseList.cs" />
+    <Compile Include="Configuration\Model\BaseSubstitution.cs" />
+    <Compile Include="Configuration\Model\CapitalizeEnum.cs" />
+    <Compile Include="Configuration\Model\CharacterList.cs" />
+    <Compile Include="Configuration\Model\CharacterSequenceItem.cs" />
+    <Compile Include="Configuration\Model\PasswordSequenceConfiguration.cs">
+      <DependentUpon>PasswordSequenceConfiguration.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Model\PercentEnum.cs" />
+    <Compile Include="Configuration\Model\SequenceItem.cs" />
+    <Compile Include="Configuration\Model\CustomSerializationBaseList.cs" />
+    <Compile Include="Configuration\Model\StrengthEnum.cs" />
+    <Compile Include="Configuration\Model\SubstitutionList.cs" />
+    <Compile Include="Configuration\Model\WholeSubstitution.cs" />
+    <Compile Include="Configuration\Model\WordList.cs" />
+    <Compile Include="Configuration\Model\WordSequenceItem.cs" />
+    <Compile Include="CryptoRandomRange.cs" />
+    <Compile Include="Forms\OrientedTextLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\Direction.cs" />
+    <Compile Include="Forms\Orientation.cs" />
+    <Compile Include="Forms\StrengthBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\StrengthBar.Designer.cs">
+      <DependentUpon>StrengthBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SubstitutionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SubstitutionForm.Designer.cs">
+      <DependentUpon>SubstitutionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SubstitutionListControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\WordListEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WordListEdit.Designer.cs">
+      <DependentUpon>WordListEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GeneratorPlugin.cs" />
+    <Compile Include="Forms\ListItem.cs" />
+    <Compile Include="Forms\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ItemGenerator\CharacterGenerator.cs" />
+    <Compile Include="ItemGenerator\IItemGenerator.cs" />
+    <Compile Include="ItemGenerator\ItemGenerator.cs" />
+    <Compile Include="ItemGenerator\WordGenerator.cs" />
+    <Compile Include="ItemVisitor\AnySubstitutionVisitor.cs" />
+    <Compile Include="ItemVisitor\CapitalizeVisitor.cs" />
+    <Compile Include="ItemVisitor\IItemVisitor.cs" />
+    <Compile Include="ItemVisitor\ISubstitutionVisitor.cs" />
+    <Compile Include="ItemVisitor\SubstitutionsVisitor.cs" />
+    <Compile Include="ItemVisitor\SubstitutionVisitor.cs" />
+    <Compile Include="ItemVisitor\WholeSubstitutionVisitor.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Sequencer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Configuration\Model\PasswordSequenceConfiguration.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SubstitutionForm.resx">
+      <DependentUpon>SubstitutionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WordListEdit.resx">
+      <DependentUpon>WordListEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="lib\KeePass.exe" />
+    <None Include="Resources\icon-add.png" />
+    <None Include="Resources\delete_24.png" />
+    <None Include="Resources\probability.ico" />
+    <None Include="Resources\edit.png" />
+    <None Include="Resources\pencil_32.png" />
+    <None Include="Resources\gear_32.png" />
+    <None Include="Resources\up_32.png" />
+    <None Include="Resources\down_32.png" />
+    <Content Include="options.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SamplePasswordSequenceConfiguration.xml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy /y $(ProjectDir)options.xml $(TargetDir)</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
