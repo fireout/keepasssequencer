@@ -4,10 +4,9 @@
 
 Have a look at the [wiki for the user documentation](https://github.com/fireout/keepasssequencer/wiki)
 
-You can run from the bin/Release folder, if you stick a copy of KeePass.exe.config there.
+## Releases
 
-Generated passwords will be empty until you configure some settings. You can do this from within the app, or by copying the options.xml or 
-SamplePasswordSequenceConfiguration.xml from the project root directory into one of the paths specified in the Sequencer.dll.config file.
+Releases are located in the [release folder](https://github.com/fireout/keepasssequencer/tree/master/release).  You can copy the Sequencer.dll and Sequencer.dll.config in the KeePass directory.  See the [wiki](https://github.com/fireout/keepasssequencer/wiki/1.-Installation) for more details.
 
 ## Source Code
 
