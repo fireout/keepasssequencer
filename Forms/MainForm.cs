@@ -71,6 +71,7 @@ namespace Sequencer.Forms
         private ToolStripMenuItem optionsToolStripMenuItem;
         internal ToolStripMenuItem advancedModeToolStripMenuItem;
         private ToolStripMenuItem newGeneralServiceListbaseWordsToolStripMenuItem;
+        private ToolStripMenuItem deleteToolStripMenuItem;
 
         private System.Timers.Timer wordlistUpdateTimer;
         public delegate void LoadConfigDelegate(bool loadTextFields);
@@ -550,7 +551,7 @@ namespace Sequencer.Forms
             this.lblClose = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.lnkTop5k = new System.Windows.Forms.LinkLabel();
-            this.substitutionList1 = new SubstitutionListControl();
+            this.substitutionList1 = new global::Sequencer.Forms.SubstitutionListControl();
             this.label3 = new System.Windows.Forms.Label();
             this.txtCharacterList = new System.Windows.Forms.TextBox();
             this.txtWordList = new System.Windows.Forms.TextBox();
@@ -560,7 +561,7 @@ namespace Sequencer.Forms
             this.lblCharacters = new System.Windows.Forms.Label();
             this.lblWords = new System.Windows.Forms.Label();
             this.listPreviews = new System.Windows.Forms.ListView();
-            this.strengthBar = new StrengthBar();
+            this.strengthBar = new global::Sequencer.Forms.StrengthBar();
             this.lvSequence = new System.Windows.Forms.ListView();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
@@ -585,6 +586,7 @@ namespace Sequencer.Forms
             this.defaultWordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dicewareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bealeDicewareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newGeneralServiceListbaseWordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newGeneralServiceListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.top5000ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -598,7 +600,7 @@ namespace Sequencer.Forms
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.advancedModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newGeneralServiceListbaseWordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             label5 = new System.Windows.Forms.Label();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -1032,7 +1034,8 @@ namespace Sequencer.Forms
             this.defaultCharactersToolStripMenuItem,
             this.toolStripMenuItem1,
             this.loadToolStripMenuItem,
-            this.saveToolStripMenuItem});
+            this.saveToolStripMenuItem,
+            this.deleteToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -1064,6 +1067,13 @@ namespace Sequencer.Forms
             this.bealeDicewareToolStripMenuItem.Size = new System.Drawing.Size(298, 22);
             this.bealeDicewareToolStripMenuItem.Text = "Beale Diceware";
             this.bealeDicewareToolStripMenuItem.Click += new System.EventHandler(this.bealeDicewareToolStripMenuItem_Click);
+            // 
+            // newGeneralServiceListbaseWordsToolStripMenuItem
+            // 
+            this.newGeneralServiceListbaseWordsToolStripMenuItem.Name = "newGeneralServiceListbaseWordsToolStripMenuItem";
+            this.newGeneralServiceListbaseWordsToolStripMenuItem.Size = new System.Drawing.Size(298, 22);
+            this.newGeneralServiceListbaseWordsToolStripMenuItem.Text = "New General Service List (base words only)";
+            this.newGeneralServiceListbaseWordsToolStripMenuItem.Click += new System.EventHandler(this.newGeneralServiceListbaseWordsToolStripMenuItem_Click);
             // 
             // newGeneralServiceListToolStripMenuItem
             // 
@@ -1157,12 +1167,12 @@ namespace Sequencer.Forms
             this.advancedModeToolStripMenuItem.Text = "Advanced Mode";
             this.advancedModeToolStripMenuItem.Click += new System.EventHandler(this.advancedModeToolStripMenuItem_Click);
             // 
-            // newGeneralServiceListbaseWordsToolStripMenuItem
+            // deleteToolStripMenuItem
             // 
-            this.newGeneralServiceListbaseWordsToolStripMenuItem.Name = "newGeneralServiceListbaseWordsToolStripMenuItem";
-            this.newGeneralServiceListbaseWordsToolStripMenuItem.Size = new System.Drawing.Size(298, 22);
-            this.newGeneralServiceListbaseWordsToolStripMenuItem.Text = "New General Service List (base words only)";
-            this.newGeneralServiceListbaseWordsToolStripMenuItem.Click += new System.EventHandler(this.newGeneralServiceListbaseWordsToolStripMenuItem_Click);
+            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.deleteToolStripMenuItem.Text = "Delete";
+            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -1446,5 +1456,27 @@ namespace Sequencer.Forms
         {
             tsbEdit_Click(sender, e);
         }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(MessageBox.Show("This will delete the currently opened file.  Are you sure?","Confirm delete",MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+            {
+                try
+                {
+                    string targetPath = new PasswordSequenceConfigurationFactory().GetUserFilePath(Configuration.Name);
+                    Configuration = new PasswordSequenceConfigurationFactory().LoadFromUserFile() ?? new PasswordSequenceConfiguration();
+                    UpdateWindowTitle();
+                    LoadConfigurationDetails(true);
+                    System.IO.File.Delete(targetPath);
+                    AddFoundTemplateMenuItem();
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, ex.GetType().ToString(), MessageBoxButtons.OK);
+                }
+            }
+        }
     }
 }
+

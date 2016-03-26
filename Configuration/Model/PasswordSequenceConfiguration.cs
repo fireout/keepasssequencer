@@ -15,6 +15,9 @@ namespace Sequencer.Configuration.Model
             XmlNamespace = new XmlSerializerNamespaces();
             XmlNamespace.Add(string.Empty, "http://quasivirtuel.com/PasswordSequenceConfiguration.xsd");
 
+            DefaultWords = new WordList();
+            DefaultCharacters = new CharacterList();
+            DefaultSubstitutions = new List<BaseSubstitution>();
             Sequence = new List<SequenceItem>();
         }
 
@@ -25,10 +28,6 @@ namespace Sequencer.Configuration.Model
         public PasswordSequenceConfiguration(bool throwaway)
             : this()
         {
-            DefaultWords = new WordList();
-            DefaultCharacters = new CharacterList();
-            DefaultSubstitutions = new List<BaseSubstitution>();
-            Sequence = new List<SequenceItem>();
             if (throwaway)
             {
                 DefaultWords.AddRange(new[] { "Replace", "those", "words", "with", "your", "own", "selection" });
