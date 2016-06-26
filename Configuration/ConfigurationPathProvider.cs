@@ -40,6 +40,12 @@ namespace Sequencer.Configuration
 
         public string GetUserFilePath(string profileName = null)
         {
+            return GetLocalUserFilePath(profileName, Environment.SpecialFolder.ApplicationData);
+        }
+
+
+        public string GetLocalUserFilePath(string profileName = null, Environment.SpecialFolder folder = Environment.SpecialFolder.LocalApplicationData)
+        {
             string config = null;
             if (sequencerConfiguration.AppSettings.Settings["userConfigPath"] != null)
                 config = sequencerConfiguration.AppSettings.Settings["userConfigPath"].Value;
@@ -50,7 +56,7 @@ namespace Sequencer.Configuration
                 if (!System.IO.Path.IsPathRooted(config))
                 {
                     config = Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                        Environment.GetFolderPath(folder),
                         config);
                 }
             }
@@ -58,7 +64,7 @@ namespace Sequencer.Configuration
             if (null == config)
             {
                 config = Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                        Environment.GetFolderPath(folder),
                         "sequencer.xml");
 
                 config = InsertProfileNameInPath(config, profileName);
