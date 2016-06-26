@@ -18,6 +18,23 @@ namespace Sequencer
 {
     public class Sequencer : CustomPwGenerator
     {
+        internal ConfigurationFactory ConfigurationFactory { get; private set; }
+        internal ConfigurationPathProvider ConfigurationPathProvider { get; private set; }
+        internal Sequence.SequenceFactory SequenceFactory { get; private set; }
+        internal ConfigurationWriter ConfigurationWriter { get; private set; }
+        internal System.Configuration.Configuration AppConfiguration { get; private set; }
+
+        public Sequencer()
+        {
+            AppConfiguration = System.Configuration.ConfigurationManager.OpenExeConfiguration(typeof(Sequencer).Assembly.Location);
+
+            ConfigurationFactory = new ConfigurationFactory(AppConfiguration);
+            this.SequenceFactory = new Sequence.SequenceFactory();
+            ConfigurationWriter = new ConfigurationWriter();
+            this.ConfigurationPathProvider = new ConfigurationPathProvider(AppConfiguration);
+        }
+
+
         /// <summary>
         /// Loads a PasswordSequenceConfiguration configuration 
         /// </summary>
@@ -25,8 +42,8 @@ namespace Sequencer
         /// <returns></returns>
         public PasswordSequenceConfiguration Load(string profileName = null)
         {
-            ConfigurationFactory factory = new ConfigurationFactory();
-            return factory.LoadFromUserFile(profileName) ?? factory.LoadFromFile(factory.GetSystemFilePath(profileName));
+            return ConfigurationFactory.LoadFromFile(ConfigurationPathProvider.GetUserFilePath(profileName))
+                ?? ConfigurationFactory.LoadFromFile(ConfigurationPathProvider.GetSystemFilePath(profileName));
         }
 
         public void Save(PasswordSequenceConfiguration configuration)
@@ -37,37 +54,8 @@ namespace Sequencer
                 return;
             }
 
-
-            /* pass "true" to GetConfigurationPath to default to the user config
-             * even when it doesn't exist yet; we'll create it here
-             */
-            ConfigurationFactory factory = new ConfigurationFactory();
-
-            string configFile = factory.GetUserFilePath(configuration.Name);
-            if (null != configFile)
-            {
-                XmlSerializer serializer =
-                    new XmlSerializer(typeof(PasswordSequenceConfiguration),
-                                      "http://quasivirtuel.com/PasswordSequenceConfiguration.xsd");
-
-                /* create the config file's directory if needed */
-                Directory.CreateDirectory(Path.GetDirectoryName(configFile));
-
-                /* open the file for writing, creating a new one if needed */
-                FileStream configStream = File.Open(configFile, FileMode.Create);
-
-                try
-                {
-                    serializer.Serialize(configStream, configuration);
-                }
-                finally
-                {
-                    configStream.Close();
-                }
-            }
-            /* TODO: should we pop up an error message or something in the
-             * "else" case (i.e. when getting config file path fails)?
-             */
+            string configFile = ConfigurationPathProvider.GetUserFilePath(configuration.Name);
+            ConfigurationWriter.Write(configuration, configFile);
         }
 
         internal static bool GetAdvancedOptionRequired(PasswordSequenceConfiguration configuration)
@@ -91,11 +79,11 @@ namespace Sequencer
             return usesAdvancedOptions;
         }
 
-
-        private Sequence.SequenceFactory SequenceFactory { get; set; }
         public override ProtectedString Generate(PwProfile prf, CryptoRandomStream crsRandomSource)
         {
             PasswordSequenceConfiguration config = Load(prf.CustomAlgorithmOptions);
+            if (config == null)
+                return null;
 
             return new ProtectedString(true, SequenceFactory.Generate(config, new CryptoRandomRange(crsRandomSource)));
         }
@@ -106,8 +94,7 @@ namespace Sequencer
             PasswordSequenceConfiguration configuration = new Sequencer().Load(strCurrentOptions);
             if (configuration == null)
             {
-                ConfigurationFactory factory = new ConfigurationFactory();
-                string userFilePath = factory.GetUserFilePath();
+                string userFilePath = ConfigurationPathProvider.GetUserFilePath();
                 MessageBox.Show("An error occurred reading the Sequencer configuration file at " +
                                  userFilePath + ". It may be corrupt. Fix or delete and try again. " +
                                  "A default configuration has been loaded.",
@@ -115,7 +102,7 @@ namespace Sequencer
                                  MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            MainForm form = new MainForm(configuration ?? new PasswordSequenceConfiguration(true));
+            MainForm form = new MainForm(configuration ?? new PasswordSequenceConfiguration(true), this);
             form.ShowDialog();
 
             // this reset the need for a dialog

@@ -19,10 +19,12 @@ namespace Sequencer
 
         private string GetUpdateUrl()
         {
-            Configuration.ConfigurationFactory factory = new Configuration.ConfigurationFactory();
-            if (factory.SequencerConfiguration.AppSettings.Settings["version-file-url"] != null)
+            if (m_gen == null)
+                return null;
+
+            if (m_gen.AppConfiguration.AppSettings.Settings["version-file-url"] != null)
             {
-                return factory.SequencerConfiguration.AppSettings.Settings["version-file-url"].Value;
+                return m_gen.AppConfiguration.AppSettings.Settings["version-file-url"].Value;
             }
             return base.UpdateUrl;
 

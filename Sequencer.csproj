@@ -74,6 +74,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\ConfigurationPathProvider.cs" />
+    <Compile Include="Configuration\ConfigurationWriter.cs" />
     <Compile Include="Configuration\Model\AnySubstitution.cs" />
     <Compile Include="Configuration\ConfigurationFactory.cs" />
     <Compile Include="Configuration\Model\OverridingCustomSerializationBaseList.cs" />

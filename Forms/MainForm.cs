@@ -98,11 +98,14 @@ namespace Sequencer.Forms
             wordlistUpdateTimer.Elapsed += this.RefreshOnTimer;
         }
 
-        public MainForm(PasswordSequenceConfiguration configuration)
+        public MainForm(PasswordSequenceConfiguration configuration, Sequencer sequencer)
             : this()
         {
+            this.sequencer = sequencer;
             Configuration = configuration;
         }
+
+        private Sequencer sequencer;
 
         public PasswordSequenceConfiguration Configuration { get; set; }
 
@@ -112,7 +115,7 @@ namespace Sequencer.Forms
 
             if (Configuration == null)
             {
-                Configuration = new Sequencer().Load();
+                Configuration = sequencer.Load() ?? new PasswordSequenceConfiguration(true);
             }
 
             if (Sequencer.GetAdvancedOptionRequired(Configuration))
@@ -162,8 +165,6 @@ namespace Sequencer.Forms
             CryptoRandomRange randomizer = new CryptoRandomRange(
                         new CryptoRandomStream(CrsAlgorithm.Salsa20, pbKey));
 
-            Sequence.SequenceFactory sequencer = new Sequence.SequenceFactory();
-
             double entropy = 0;
 
             foreach (SequenceItem sequenceItem in Configuration.Sequence)
@@ -206,7 +207,7 @@ namespace Sequencer.Forms
             listPreviews.Items.Clear();
             for (int i = 0; i < 50; i++)
             {
-                listPreviews.Items.Add(sequencer.Generate(Configuration, randomizer));
+                listPreviews.Items.Add(sequencer.SequenceFactory.Generate(Configuration, randomizer));
             }
             strengthBar.Value = Math.Min((int)entropy, strengthBar.Maximum);
 
@@ -1277,7 +1278,7 @@ namespace Sequencer.Forms
 
         private void AppendWordListFromProfile(string stringResource)
         {
-            PasswordSequenceConfiguration tempConfiguration = new ConfigurationFactory().LoadFromResource(stringResource);
+            PasswordSequenceConfiguration tempConfiguration = sequencer.ConfigurationFactory.LoadFromResource(stringResource);
             if (tempConfiguration != null)
             {
                 AppendWordList(tempConfiguration.DefaultWords.ToString());
@@ -1377,14 +1378,13 @@ namespace Sequencer.Forms
         {
             loadToolStripMenuItem.DropDownItems.Clear();
 
-            var factory = new ConfigurationFactory();
-            foreach (string config in factory.ListConfigurationFiles())
+            foreach (string config in sequencer.ConfigurationPathProvider.ListConfigurationFiles())
             {
                 try
                 {
                     ToolStripItem configItem = new ToolStripMenuItem();
                     configItem.Tag = config;
-                    PasswordSequenceConfiguration psconfig = factory.LoadFromFile(config);
+                    PasswordSequenceConfiguration psconfig = sequencer.ConfigurationFactory.LoadFromFile(config);
                     if (psconfig == null)
                         continue;
                     if (!string.IsNullOrEmpty(psconfig.Name))
@@ -1409,7 +1409,13 @@ namespace Sequencer.Forms
             ToolStripItem item = sender as ToolStripItem;
             if (item != null)
             {
-                Configuration = new ConfigurationFactory().LoadFromFile(item.Tag.ToString());
+                PasswordSequenceConfiguration config = sequencer.ConfigurationFactory.LoadFromFile(item.Tag.ToString());
+                if (config == null)
+                {
+                    MessageBox.Show("Could not load this template");
+                    return;
+                }
+                Configuration = config;
                 UpdateWindowTitle();
                 LoadConfigurationDetails(true);
             }
@@ -1463,8 +1469,8 @@ namespace Sequencer.Forms
             {
                 try
                 {
-                    string targetPath = new ConfigurationFactory().GetUserFilePath(Configuration.Name);
-                    Configuration = new ConfigurationFactory().LoadFromUserFile() ?? new PasswordSequenceConfiguration();
+                    string targetPath = sequencer.ConfigurationPathProvider.GetUserFilePath(Configuration.Name);
+                    Configuration = sequencer.ConfigurationFactory.LoadFromFile(sequencer.ConfigurationPathProvider.GetUserFilePath()) ?? new PasswordSequenceConfiguration();
                     UpdateWindowTitle();
                     LoadConfigurationDetails(true);
                     System.IO.File.Delete(targetPath);
