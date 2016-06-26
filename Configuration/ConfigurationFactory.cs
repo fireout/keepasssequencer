@@ -90,7 +90,7 @@ namespace Sequencer.Configuration
 
         }
 
-        public PasswordSequenceConfiguration LoadFromSystemFile(string profileName = null)
+        public string GetSystemFilePath(string profileName = null)
         {
             string config = null;
             if (SequencerConfiguration.AppSettings.Settings["defaultConfigPath"] != null)
@@ -106,7 +106,7 @@ namespace Sequencer.Configuration
 
             if (null != config && !File.Exists(config))
             {
-                return LoadFromFile(System.IO.Path.GetFullPath(config));
+                return System.IO.Path.GetFullPath(config);
             }
             else
             {

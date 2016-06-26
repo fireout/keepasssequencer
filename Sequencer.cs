@@ -26,7 +26,7 @@ namespace Sequencer
         public PasswordSequenceConfiguration Load(string profileName = null)
         {
             ConfigurationFactory factory = new ConfigurationFactory();
-            return factory.LoadFromUserFile(profileName) ?? factory.LoadFromSystemFile(profileName);
+            return factory.LoadFromUserFile(profileName) ?? factory.LoadFromFile(factory.GetSystemFilePath(profileName));
         }
 
         public void Save(PasswordSequenceConfiguration configuration)

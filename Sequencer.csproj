@@ -75,7 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\Model\AnySubstitution.cs" />
-    <Compile Include="Configuration\PasswordSequenceConfigurationFactory.cs" />
+    <Compile Include="Configuration\ConfigurationFactory.cs" />
     <Compile Include="Configuration\Model\OverridingCustomSerializationBaseList.cs" />
     <Compile Include="Configuration\Model\BaseSubstitution.cs" />
     <Compile Include="Configuration\Model\CapitalizeEnum.cs" />
@@ -124,17 +124,17 @@
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ItemGenerator\CharacterGenerator.cs" />
-    <Compile Include="ItemGenerator\IItemGenerator.cs" />
-    <Compile Include="ItemGenerator\ItemGenerator.cs" />
-    <Compile Include="ItemGenerator\WordGenerator.cs" />
-    <Compile Include="ItemVisitor\AnySubstitutionVisitor.cs" />
-    <Compile Include="ItemVisitor\CapitalizeVisitor.cs" />
-    <Compile Include="ItemVisitor\IItemVisitor.cs" />
-    <Compile Include="ItemVisitor\ISubstitutionVisitor.cs" />
-    <Compile Include="ItemVisitor\SubstitutionsVisitor.cs" />
-    <Compile Include="ItemVisitor\SubstitutionVisitor.cs" />
-    <Compile Include="ItemVisitor\WholeSubstitutionVisitor.cs" />
+    <Compile Include="Sequence\ItemGenerator\CharacterGenerator.cs" />
+    <Compile Include="Sequence\ItemGenerator\IItemGenerator.cs" />
+    <Compile Include="Sequence\ItemGenerator\ItemGenerator.cs" />
+    <Compile Include="Sequence\ItemGenerator\WordGenerator.cs" />
+    <Compile Include="Sequence\ItemVisitor\AnySubstitutionVisitor.cs" />
+    <Compile Include="Sequence\ItemVisitor\CapitalizeVisitor.cs" />
+    <Compile Include="Sequence\ItemVisitor\IItemVisitor.cs" />
+    <Compile Include="Sequence\ItemVisitor\ISubstitutionVisitor.cs" />
+    <Compile Include="Sequence\ItemVisitor\SubstitutionsVisitor.cs" />
+    <Compile Include="Sequence\ItemVisitor\SubstitutionVisitor.cs" />
+    <Compile Include="Sequence\ItemVisitor\WholeSubstitutionVisitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -142,6 +142,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Sequencer.cs" />
+    <Compile Include="Sequence\SequenceFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

@@ -162,7 +162,7 @@ namespace Sequencer.Forms
             CryptoRandomRange randomizer = new CryptoRandomRange(
                         new CryptoRandomStream(CrsAlgorithm.Salsa20, pbKey));
 
-            Sequencer sequencer = new Sequencer();
+            Sequence.SequenceFactory sequencer = new Sequence.SequenceFactory();
 
             double entropy = 0;
 
@@ -206,7 +206,7 @@ namespace Sequencer.Forms
             listPreviews.Items.Clear();
             for (int i = 0; i < 50; i++)
             {
-                listPreviews.Items.Add(sequencer.GenerateSequence(Configuration, randomizer));
+                listPreviews.Items.Add(sequencer.Generate(Configuration, randomizer));
             }
             strengthBar.Value = Math.Min((int)entropy, strengthBar.Maximum);
 
