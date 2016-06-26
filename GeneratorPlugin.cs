@@ -19,7 +19,7 @@ namespace Sequencer
 
         private string GetUpdateUrl()
         {
-            Configuration.PasswordSequenceConfigurationFactory factory = new Configuration.PasswordSequenceConfigurationFactory();
+            Configuration.ConfigurationFactory factory = new Configuration.ConfigurationFactory();
             if (factory.SequencerConfiguration.AppSettings.Settings["version-file-url"] != null)
             {
                 return factory.SequencerConfiguration.AppSettings.Settings["version-file-url"].Value;

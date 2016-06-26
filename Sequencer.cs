@@ -25,7 +25,7 @@ namespace Sequencer
         /// <returns></returns>
         public PasswordSequenceConfiguration Load(string profileName = null)
         {
-            PasswordSequenceConfigurationFactory factory = new PasswordSequenceConfigurationFactory();
+            ConfigurationFactory factory = new ConfigurationFactory();
             return factory.LoadFromUserFile(profileName) ?? factory.LoadFromSystemFile(profileName);
         }
 
@@ -41,7 +41,7 @@ namespace Sequencer
             /* pass "true" to GetConfigurationPath to default to the user config
              * even when it doesn't exist yet; we'll create it here
              */
-            PasswordSequenceConfigurationFactory factory = new PasswordSequenceConfigurationFactory();
+            ConfigurationFactory factory = new ConfigurationFactory();
 
             string configFile = factory.GetUserFilePath(configuration.Name);
             if (null != configFile)
@@ -70,20 +70,6 @@ namespace Sequencer
              */
         }
 
-        public string GenerateSequence(PasswordSequenceConfiguration globalConfiguration,
-                                       CryptoRandomRange cryptoRandom)
-        {
-            if (globalConfiguration == null)
-                return string.Empty;
-            string targetSequence = string.Empty;
-            foreach (SequenceItem sequenceItem in globalConfiguration.Sequence)
-            {
-                targetSequence += new ItemGenerator.ItemGenerator(globalConfiguration)
-                                .Generate(sequenceItem, cryptoRandom);
-            }
-            return targetSequence;
-        }
-
         internal static bool GetAdvancedOptionRequired(PasswordSequenceConfiguration configuration)
         {
             bool usesAdvancedOptions = false;
@@ -105,11 +91,13 @@ namespace Sequencer
             return usesAdvancedOptions;
         }
 
+
+        private Sequence.SequenceFactory SequenceFactory { get; set; }
         public override ProtectedString Generate(PwProfile prf, CryptoRandomStream crsRandomSource)
         {
             PasswordSequenceConfiguration config = Load(prf.CustomAlgorithmOptions);
 
-            return new ProtectedString(true, GenerateSequence(config, new CryptoRandomRange(crsRandomSource)));
+            return new ProtectedString(true, SequenceFactory.Generate(config, new CryptoRandomRange(crsRandomSource)));
         }
 
         public override string GetOptions(string strCurrentOptions)
@@ -118,7 +106,7 @@ namespace Sequencer
             PasswordSequenceConfiguration configuration = new Sequencer().Load(strCurrentOptions);
             if (configuration == null)
             {
-                PasswordSequenceConfigurationFactory factory = new PasswordSequenceConfigurationFactory();
+                ConfigurationFactory factory = new ConfigurationFactory();
                 string userFilePath = factory.GetUserFilePath();
                 MessageBox.Show("An error occurred reading the Sequencer configuration file at " +
                                  userFilePath + ". It may be corrupt. Fix or delete and try again. " +

@@ -1277,7 +1277,7 @@ namespace Sequencer.Forms
 
         private void AppendWordListFromProfile(string stringResource)
         {
-            PasswordSequenceConfiguration tempConfiguration = new PasswordSequenceConfigurationFactory().LoadFromResource(stringResource);
+            PasswordSequenceConfiguration tempConfiguration = new ConfigurationFactory().LoadFromResource(stringResource);
             if (tempConfiguration != null)
             {
                 AppendWordList(tempConfiguration.DefaultWords.ToString());
@@ -1377,7 +1377,7 @@ namespace Sequencer.Forms
         {
             loadToolStripMenuItem.DropDownItems.Clear();
 
-            var factory = new PasswordSequenceConfigurationFactory();
+            var factory = new ConfigurationFactory();
             foreach (string config in factory.ListConfigurationFiles())
             {
                 try
@@ -1409,7 +1409,7 @@ namespace Sequencer.Forms
             ToolStripItem item = sender as ToolStripItem;
             if (item != null)
             {
-                Configuration = new PasswordSequenceConfigurationFactory().LoadFromFile(item.Tag.ToString());
+                Configuration = new ConfigurationFactory().LoadFromFile(item.Tag.ToString());
                 UpdateWindowTitle();
                 LoadConfigurationDetails(true);
             }
@@ -1463,8 +1463,8 @@ namespace Sequencer.Forms
             {
                 try
                 {
-                    string targetPath = new PasswordSequenceConfigurationFactory().GetUserFilePath(Configuration.Name);
-                    Configuration = new PasswordSequenceConfigurationFactory().LoadFromUserFile() ?? new PasswordSequenceConfiguration();
+                    string targetPath = new ConfigurationFactory().GetUserFilePath(Configuration.Name);
+                    Configuration = new ConfigurationFactory().LoadFromUserFile() ?? new PasswordSequenceConfiguration();
                     UpdateWindowTitle();
                     LoadConfigurationDetails(true);
                     System.IO.File.Delete(targetPath);

@@ -10,7 +10,7 @@ using Sequencer.Configuration.Model;
 
 namespace Sequencer.Configuration
 {
-    class PasswordSequenceConfigurationFactory
+    class ConfigurationFactory
     {
         public PasswordSequenceConfiguration LoadFromResource(string resource)
         {
