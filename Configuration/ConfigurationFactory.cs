@@ -39,7 +39,7 @@ namespace Sequencer.Configuration
         public PasswordSequenceConfiguration LoadFromFile(string path)
         {
             if (path == null || path == string.Empty)
-                throw new Exception("path must be a valid file path");
+                throw new Exception("path must be a valid file path (but was empty)");
 
             PasswordSequenceConfiguration config = null;
             try
