@@ -42,8 +42,18 @@ namespace Sequencer
         /// <returns></returns>
         public PasswordSequenceConfiguration Load(string profileName = null)
         {
-            return ConfigurationFactory.LoadFromFile(ConfigurationPathProvider.GetUserFilePath(profileName))
-                ?? ConfigurationFactory.LoadFromFile(ConfigurationPathProvider.GetSystemFilePath(profileName));
+            var path = ConfigurationPathProvider.GetUserFilePath(profileName);
+            if (string.IsNullOrEmpty(path))
+            {
+                path = ConfigurationPathProvider.GetSystemFilePath(profileName); ;
+            }
+
+            if (!string.IsNullOrEmpty(path))
+            {
+                return ConfigurationFactory.LoadFromFile(path);
+            }
+
+            return null;
         }
 
         public void Save(PasswordSequenceConfiguration configuration)
